@@ -6,14 +6,10 @@ from .images import *
 api = application = falcon.API()
 
 # Resources are represented by long-lived class instances
-images = Resource()
-things = ResourceTwo()
-test = ResourceThree()
+images = Resource('/home/dennis/Pictures')
 
 # things will handle all requests to the '/things' URL path
 api.add_route('/images', images)
-api.add_route('/things', things)
-api.add_route('/test', test)
 
 
 
