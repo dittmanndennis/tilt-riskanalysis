@@ -1,6 +1,6 @@
 import falcon
 
-from images import *
+from .images import *
 
 # falcon.API instances are callable WSGI apps
 api = application = falcon.API()
