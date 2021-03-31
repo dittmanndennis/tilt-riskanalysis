@@ -1,4 +1,5 @@
 import falcon
+import json
 import msgpack
 import io
 import os
@@ -26,8 +27,7 @@ class Resource(object):
                 }
             ]
         }
-        resp.data = msgpack.packb(doc, use_bin_type=True)
-        resp.content_type = falcon.MEDIA_MSGPACK
+        resp.body = json.dumps(doc, ensure_ascii=False)
 
     def on_post(self, req, resp):
         ext = mimetypes.guess_extension(req.content_type)

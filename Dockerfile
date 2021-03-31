@@ -1,4 +1,9 @@
-FROM alpine:latest
+FROM python:3.8-slim-buster
 
-COPY ./RiskAnalysis /code
-COPY ./.venv /code
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+COPY RiskAnalysis .
+COPY .venv .
+CMD [ "python", "app.py" ]
