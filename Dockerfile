@@ -1,9 +1,8 @@
-FROM python:3.8-slim-buster
+FROM python:3.9-slim-buster
 
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+COPY . .
 
-COPY RiskAnalysis .
-COPY .venv .
-CMD [ "python", "app.py" ]
+RUN gunicorn --worker-tmp-dir /dev/shm ...
+RUN gunicorn --workers=2 --threads=4 --worker-class=gthread
+RUN gunicorn --log-file=- ...
+CMD [ "gunicorn", "-b", "0.0.0.0:8000", "app:api" ]
