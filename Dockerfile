@@ -2,6 +2,7 @@ FROM python:3.9-slim-buster
 
 COPY . .
 
+RUN apt-get install gunicorn
 RUN gunicorn --worker-tmp-dir /dev/shm ...
 RUN gunicorn --workers=2 --threads=4 --worker-class=gthread
 RUN gunicorn --log-file=- ...
