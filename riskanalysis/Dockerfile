@@ -5,4 +5,4 @@ COPY . .
 RUN pip install gunicorn
 RUN pip install falcon
 
-CMD [ "gunicorn", "-b", "0.0.0.0:8000", "--chdir", "/riskanalysis", "app:api" ]
+CMD [ "gunicorn", "-b", "0.0.0.0:8000", "app:api" ]
