@@ -1,8 +1,7 @@
-FROM python:3.9-slim-buster
+FROM python:slim
 
 COPY . .
 
-RUN pip install gunicorn
-RUN pip install falcon
+RUN pip install -r requirements.txt
 
 CMD [ "gunicorn", "-b", "0.0.0.0:8000", "app:api" ]
