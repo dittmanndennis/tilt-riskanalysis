@@ -4,5 +4,11 @@ services:
         build: riskanalysis/
         ports:
             - "8000:8000"
-    neo4j:
+    db:
         image: "neo4j:latest"
+        ports:
+            - "7474:7474"   #HTTP
+            - "7473:7473"   #HTTPS
+            - "7687:7687"   #Bolt
+        environment:
+            - NEO4J_AUTH=none
