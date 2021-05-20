@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "_id": "790a7018-937a-449d-8933-45a2ad2c7eb6",
+    "name": "Google",
+    "created": "2021-05-20T15:53:05.929588",
+    "modified": "2021-05-20T15:53:05.929588",
+    "version": 2,
+    "language": "en",
+    "status": "active",
+    "url": "https://policies.google.com/privacy?hl=en-US",
+    "_hash": ""
+  },
+  "controller": {
+    "name": "Alphabet Inc.",
+    "division": "Google",
+    "address": "Gordon House Barrow Street Dublin 4, D04E5W5 Ireland",
+    "country": "Ireland",
+    "representative": {
+      "name": "",
+      "email": "",
+      "phone": ""
+    }
+  },
+  "dataProtectionOfficer": {
+    "name": "",
+    "address": "",
+    "country": "",
+    "email": "",
+    "phone": ""
+  },
+  "dataDisclosed": [
+    {
+      "_id": "",
+      "category": "",
+      "purposes": [
+        {
+          "purpose": "",
+          "description": ""
+        }
+      ],
+      "legalBases": [
+        {
+          "reference": "",
+          "description": ""
+        }
+      ],
+      "legitimateInterests": [
+        {
+          "exists": null,
+          "reasoning": ""
+        }
+      ],
+      "recipients": [
+        {
+          "name": "",
+          "division": "",
+          "address": "",
+          "country": "",
+          "representative": {
+            "name": "",
+            "email": "",
+            "phone": ""
+          },
+          "category": ""
+        }
+      ],
+      "storage": [
+        {
+          "temporal": [
+            {
+              "description": "",
+              "ttl": ""
+            },
+            {
+              "description": "",
+              "ttl": ""
+            }
+          ],
+          "purposeConditional": [
+            ""
+          ],
+          "legalBasisConditional": [
+            ""
+          ],
+          "aggregationFunction": ""
+        }
+      ],
+      "nonDisclosure": {
+        "legalRequirement": null,
+        "contractualRegulation": null,
+        "obligationToProvide": null,
+        "consequences": ""
+      }
+    }
+  ],
+  "thirdCountryTransfers": [
+    {
+      "country": "",
+      "adequacyDecision": {
+        "available": null,
+        "description": ""
+      },
+      "appropriateGuarantees": {
+        "available": null,
+        "description": ""
+      },
+      "presenceOfEnforceableRightsAndEffectiveRemedies": {
+        "available": null,
+        "description": ""
+      },
+      "standardDataProtectionClause": {
+        "available": null,
+        "description": ""
+      }
+    }
+  ],
+  "accessAndDataPortability": {
+    "available": null,
+    "description": "",
+    "url": "",
+    "email": "",
+    "identificationEvidences": [
+      "",
+      ""
+    ],
+    "administrativeFee": {
+      "amount": 0,
+      "currency": ""
+    },
+    "dataFormats": [
+      "",
+      ""
+    ]
+  },
+  "sources": [
+    {
+      "_id": "",
+      "dataCategory": "",
+      "sources": [
+        {
+          "description": "",
+          "url": "",
+          "publiclyAvailable": null
+        }
+      ]
+    }
+  ],
+  "rightToInformation": {
+    "available": null,
+    "description": "",
+    "url": "",
+    "email": "",
+    "identificationEvidences": [
+      "",
+      ""
+    ]
+  },
+  "rightToRectificationOrDeletion": {
+    "available": null,
+    "description": "",
+    "url": "",
+    "email": "",
+    "identificationEvidences": [
+      "",
+      ""
+    ]
+  },
+  "rightToDataPortability": {
+    "available": null,
+    "description": "",
+    "url": "",
+    "email": "",
+    "identificationEvidences": [
+      ""
+    ]
+  },
+  "rightToWithdrawConsent": {
+    "available": null,
+    "description": "",
+    "url": "",
+    "email": "",
+    "identificationEvidences": [
+      ""
+    ]
+  },
+  "rightToComplain": {
+    "available": null,
+    "description": "",
+    "url": "",
+    "email": "",
+    "identificationEvidences": [
+      "",
+      ""
+    ],
+    "supervisoryAuthority": {
+      "name": "",
+      "address": "",
+      "country": "",
+      "email": "",
+      "phone": ""
+    }
+  },
+  "automatedDecisionMaking": {
+    "inUse": null,
+    "logicInvolved": "",
+    "scopeAndIntendedEffects": ""
+  },
+  "changesOfPurpose": [
+    {
+      "description": "",
+      "affectedDataCategories": [
+        "",
+        ""
+      ],
+      "plannedDateOfChange": "",
+      "urlOfNewVersion": ""
+    }
+  ]
+}
