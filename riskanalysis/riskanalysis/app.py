@@ -1,15 +1,14 @@
-import falcon
+import falcon.asgi
 
-from images import *
+from .resources import *
 
 # falcon.API instances are callable WSGI apps
-api = application = falcon.API()
-
-# Resources are represented by long-lived class instances
-images = Resource('/home/dennis/Pictures')
+app = falcon.asgi.App()
 
 # things will handle all requests to the '/things' URL path
-api.add_route('/images', images)
+# 
+res = Resource()
+app.add_route('/', res)
 
 
 
