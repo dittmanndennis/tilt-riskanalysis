@@ -1,12 +1,12 @@
 # RiskAnalysis
 
-gunicorn --reload app:api
+uvicorn --reload riskanalysis.app:app
 
 http localhost:8000/images
 
 Docker:
 
-  sudo docker build .
+  sudo docker build . -t <tag>
   
   sudo docker run -p 8000:8000 <image-id>
   
