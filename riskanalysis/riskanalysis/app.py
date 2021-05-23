@@ -1,6 +1,18 @@
 import falcon.asgi
+import mongoengine as mongo
+from falcon_swagger_ui import register_swaggerui_app
 
 from .resources import *
+from .common.constants import *
+
+# connecting to mongoDB
+mongo.connect(
+    db=MONGO['DATABASE'],
+    host=MONGO['HOST'],
+    port=MONGO['PORT'],
+    username=MONGO['USERNAME'],
+    password=MONGO['PASSWORD']
+)
 
 # falcon.API instances are callable WSGI apps
 app = falcon.asgi.App()
@@ -10,17 +22,8 @@ app = falcon.asgi.App()
 res = Resource()
 app.add_route('/', res)
 
-
-
-#help(falcon.API.__call__)
-#Help on function __call__ in module falcon.api:
-#__call__(self, env, start_response)
-#    WSGI `app` method.   
-#    Makes instances of API callable from a WSGI server. May be used to
-#    host an API or called directly in order to simulate requests when
-#    testing the API.    
-#    (See also: PEP 3333)    
-#    Args:
-#        env (dict): A WSGI environment dictionary
-#        start_response (callable): A WSGI helper function for setting
-#            status and headers on a response.
+# register swagger ui
+#register_swaggerui_app(app, SWAGGERUI_URL, SCHEMA_URL, page_title=PAGE_TITLE,
+#    favicon_url=FAVICON_URL,
+#    config={'supportedSubmitMethods': ['get', 'post']}
+#)
