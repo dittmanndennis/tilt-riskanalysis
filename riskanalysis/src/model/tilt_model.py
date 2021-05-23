@@ -1,4 +1,5 @@
-from mongoengine import *
+import mongoengine as mongo
 
-class TILT(Document):
-    id = StringField()
+class TILT(mongo.Document):
+    id = mongo.StringField()
+    price = mongo.FloatField()

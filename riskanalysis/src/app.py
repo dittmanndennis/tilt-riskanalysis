@@ -1,7 +1,7 @@
 import falcon.asgi
 import mongoengine as mongo
 
-from .resource.resources import *
+from .resource.tilt_resource import *
 from .common.constants import *
 
 # swagger ui - NO ASGI SUPPORT YET
@@ -15,11 +15,12 @@ from .common.constants import *
 
 # connecting to mongoDB
 mongo.connect(
-    db=MONGO['DATABASE'],
+    MONGO['DATABASE'],
     host=MONGO['HOST'],
     port=MONGO['PORT'],
     username=MONGO['USERNAME'],
-    password=MONGO['PASSWORD']
+    password=MONGO['PASSWORD'],
+    authentication_source=MONGO['AUTHENTICATION_SOURCE']
 )
 
 # falcon.API instances are callable WSGI apps
@@ -27,5 +28,5 @@ app = falcon.asgi.App()
 
 # things will handle all requests to the '/things' URL path
 # 
-res = Resource()
+res = TILTResource()
 app.add_route('/', res)

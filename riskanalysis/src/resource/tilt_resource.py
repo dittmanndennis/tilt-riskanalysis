@@ -6,22 +6,24 @@ import os
 import uuid
 import mimetypes
 
+from ..model.tilt_model import TILT
+
 # Falcon follows the REST architectural style, meaning (among
 # other things) that you think in terms of resources and state
 # transitions, which map to HTTP verbs.
-class Resource:
+class TILTResource:
 
     async def on_get(self, req, resp):
-        """Handles GET requests"""
-        resp.status = falcon.HTTP_200  # This is the default status
-        doc = {
-            'images': [
-                {
-                    'href': 'https://dittmann.io/'
-                }
-            ]
-        }
-        resp.body = json.dumps(doc, ensure_ascii=False)
+        try:
+            tilts = TILT.objects()
+            resp.text = tilts.to_json()
+        except Exception as e:
+            print(e)
+        #finally:
+            doc = {'images': [{'href': 'https://dittmann.io/'}]}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+        
+        resp.status = falcon.HTTP_200
 
     async def on_post(self, req, resp, user_id):
         try:
