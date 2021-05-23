@@ -1,9 +1,17 @@
 import falcon.asgi
 import mongoengine as mongo
-from falcon_swagger_ui import register_swaggerui_app
 
-from .resources import *
+from .resource.resources import *
 from .common.constants import *
+
+# swagger ui - NO ASGI SUPPORT YET
+#from falcon_swagger_ui import register_swaggerui_app
+
+# register swagger ui - NO ASGI SUPPORT YET
+#register_swaggerui_app(app, SWAGGERUI_URL, SCHEMA_URL, page_title=PAGE_TITLE,
+#    favicon_url=FAVICON_URL,
+#    config={'supportedSubmitMethods': ['get', 'post']}
+#)
 
 # connecting to mongoDB
 mongo.connect(
@@ -21,9 +29,3 @@ app = falcon.asgi.App()
 # 
 res = Resource()
 app.add_route('/', res)
-
-# register swagger ui
-#register_swaggerui_app(app, SWAGGERUI_URL, SCHEMA_URL, page_title=PAGE_TITLE,
-#    favicon_url=FAVICON_URL,
-#    config={'supportedSubmitMethods': ['get', 'post']}
-#)
