@@ -1,25 +1,35 @@
 import falcon
-from mongoengine import *
+import pymongo as pymongo
 import json
 import io
 import os
 import uuid
 import mimetypes
 
-from ..model.tilt_model import TILT
+from ..common.constants import *
 
 # Falcon follows the REST architectural style, meaning (among
 # other things) that you think in terms of resources and state
 # transitions, which map to HTTP verbs.
+
+# pymongo connecting to mongoDB
+client = pymongo.MongoClient(
+    #MONGO['DATABASE'],
+    host=MONGO['HOST'],
+    port=MONGO['PORT'],
+    username=MONGO['USERNAME'],
+    password=MONGO['PASSWORD']#,
+    #authentication_source=MONGO['AUTHENTICATION_SOURCE']
+)
+tiltCollection = client.RiskAnalysis.tilt
+
 class TILTResource:
 
     async def on_get(self, req, resp):
         try:
-            tilts = TILT.objects()
-            resp.text = tilts.to_json()
+            doc = tiltCollection
         except Exception as e:
             print(e)
-        #finally:
             doc = {'images': [{'href': 'https://dittmann.io/'}]}
             resp.text = json.dumps(doc, ensure_ascii=False)
         
