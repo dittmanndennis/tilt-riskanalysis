@@ -1,8 +1,8 @@
 # RiskAnalysis
 
-uvicorn --reload riskanalysis.app:app
+uvicorn --reload riskanalysis.src.app:app
 
-http localhost:8000/images
+http localhost:8000/domain
 
 Docker:
 
