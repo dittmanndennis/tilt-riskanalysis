@@ -42,4 +42,4 @@ app = falcon.asgi.App()
 
 # 
 res = TILTResource()
-app.add_route('/', res)
+app.add_route('/{domain}', res)

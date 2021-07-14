@@ -1,15 +1,29 @@
 import falcon
 from falcon import testing
-import msgpack
 import pytest
 from unittest.mock import mock_open, call
 
-from riskanalysis.app import api
+from riskanalysis.src.app import app
 
 
 @pytest.fixture
 def client():
-    return testing.TestClient(api)
+
+    def test_list_images(client):
+        doc = {
+            'images': [
+                {
+                    'href': '/home/dennis/Pictures/Depot.png'
+                }
+            ]
+        }
+
+        response = client.simulate_get('/')
+
+        assert response.content == doc
+        assert response.status == falcon.HTTP_OK
+
+    return testing.TestClient(app)
 
 # doesnt recognize from images (absolute import),
 # but from .image (relative import)
@@ -26,10 +40,9 @@ def client():
 #        ]
 #    }
 
-#    response = client.simulate_get('/images')
-#    result_doc = msgpack.unpackb(response.content, raw=False)
+#    response = client.simulate_get('/')
 
-#    assert result_doc == doc
+#    assert response.content == doc
 #    assert response.status == falcon.HTTP_OK
 
 # doesnt recognize from images (absolute import),
