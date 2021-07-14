@@ -19,14 +19,35 @@ class FindTILTs(object):
     def findTILTs(self, domain):
         this = FindTILTs()
         tilts = []
+        prevTILTs = []
         nextTILTs = []
-        nextTILT = this.nextTILT(domain)
-        doc = JSONEncoder().encode(nextTILT)
-        for dataDisclosed in nextTILT["dataDisclosed"]:
-            for recipient in dataDisclosed["recipients"]:
-                nextTILTs.append(recipient["domain"])
+        visitedTILTs = [ domain ]
 
-        return domain
+        tilt = this.nextTILT(domain)
+        tilts.append(JSONEncoder().encode(tilt))
+
+        for dataDisclosed in prevTILTs[0]["dataDisclosed"]:
+                    for recipient in dataDisclosed["recipients"]:
+                        nextTILTs.append(recipient["domain"])
+        
+        prevTILTs.clear()
+        prevTILTs = nextTILTs.copy()
+        nextTILTs.clear()
+
+        while prevTILTs.count() > 0:
+
+            for nextTILT in prevTILTs:
+                nextTILT = this.nextTILT(nextTILT)
+                tilts.append(nextTILT)
+                for dataDisclosed in nextTILT["dataDisclosed"]:
+                    for recipient in dataDisclosed["recipients"]:
+                        nextTILTs.append(recipient["domain"])
+            
+            prevTILTs.clear()
+            prevTILTs = nextTILTs.copy()
+            nextTILTs.clear()
+
+        return tilts
 
     def nextTILT(self, domain):
         try:
