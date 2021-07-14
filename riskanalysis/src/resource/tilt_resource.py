@@ -2,10 +2,10 @@ import falcon
 import pymongo as pymongo
 import re
 import json
-import uuid
 
 from ..common.constants import *
 from ..logic.logic import *
+from ..logic.json_encoder import *
 
 # Falcon follows the REST architectural style, meaning (among
 # other things) that you think in terms of resources and state
@@ -26,7 +26,6 @@ class TILTResource:
 
     async def on_get(self, req, resp, domain):
         try:
-            print(domain)
             doc = tiltCollection.find_one({ "meta.url": re.compile(domain + "/|" + domain + "$") } )
             if doc == None:
                 doc = { "error": "TILT not found" }
@@ -38,23 +37,7 @@ class TILTResource:
                 resp.text = json.dumps(doc, ensure_ascii=False)
                 resp.status = falcon.HTTP_200
         except Exception as e:
-            print(e)
-            doc = { "error": "ERROR" }
+            doc = { "error": e }
             doc = JSONEncoder().encode(doc)
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_404
-
-    async def on_post(self, req, resp, user_id):
-        #tiltJson = await req.get_media()
-        try:
-            doc = req.context.Document
-        except AttributeError:
-            raise falcon.HTTPBadRequest(
-                title='Missing thing',
-                description='A thing must be submitted int the request body.'
-            )
-
-        proper_thing = await self.db.add_thing(doc)
-
-        resp.status = falcon.HTTP_201
-        resp.location = '/%s/things/%s' % (user_id, proper_thing['id'])
