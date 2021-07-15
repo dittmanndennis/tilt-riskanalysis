@@ -53,6 +53,7 @@
       "recipients": [
         {
           "name": "Alphabet Inc.",
+          "domain": "google.com",
           "division": "Google Analytics",
           "address": "Gordon House Barrow Street Dublin 4, D04E5W5 Ireland",
           "country": "Ireland",
@@ -65,6 +66,7 @@
         },
         {
           "name": "Alphabet Inc.",
+          "domain": "google.com",
           "division": "DoubleClick Inc.",
           "address": "111 8th Avenue New York, NY 10011 United States",
           "country": "United States",
