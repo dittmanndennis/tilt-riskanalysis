@@ -5,5 +5,5 @@ class Logic(object):
 
     def getRiskScore(self, domain):
         find = FindTILTs()
-
+        
         return { "RiskScore": len(find.findTILTs(domain)) }

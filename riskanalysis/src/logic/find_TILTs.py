@@ -1,4 +1,3 @@
-import json
 import pymongo as pymongo
 import re
 
@@ -24,7 +23,7 @@ class FindTILTs(object):
         visitedTILTs = [ domain ]
 
         tilt = this.nextTILT(domain)
-        tilts.append(tilt)#JSONEncoder().encode(tilt))
+        tilts.append(tilt)
 
         for dataDisclosed in tilts[0]["dataDisclosed"]:
             for recipient in dataDisclosed["recipients"]:
@@ -62,4 +61,5 @@ class FindTILTs(object):
         try:
             return tiltCollection.find_one( { "meta.url": re.compile(domain + "/|" + domain + "$") } )
         except Exception as e:
-            return e
+            print(e)
+            return None

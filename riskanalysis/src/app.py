@@ -19,24 +19,6 @@ from .tilt import *
 #    config={'supportedSubmitMethods': ['get', 'post']}
 #)
 
-# pymongo connecting to mongoDB
-client = pymongo.MongoClient(
-    #MONGO['DATABASE'],
-    host=MONGO['HOST'],
-    port=MONGO['PORT'],
-    username=MONGO['USERNAME'],
-    password=MONGO['PASSWORD']#,
-    #authentication_source=MONGO['AUTHENTICATION_SOURCE']
-)
-tiltCollection = client.RiskAnalysis.tilt
-
-try:
-    # The ismaster command is cheap and does not require auth.
-    #client.admin.command('ismaster')
-    pprint(client.RiskAnalysis.tilt.count())
-except ConnectionFailure:
-    print("Server not available")
-
 # falcon.asgi.APP instances are callable ASGI apps
 app = falcon.asgi.App()
 
