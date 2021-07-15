@@ -58,6 +58,7 @@
       "recipients": [
         {
           "name": "Yellow Company AG",
+          "domain": "yellowcompany.com",
           "division": "Product line e-mobility",
           "address": "Triana 123, 9999 Seville",
           "country": "ES",

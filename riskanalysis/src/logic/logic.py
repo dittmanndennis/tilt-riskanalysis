@@ -1,8 +1,9 @@
-import json
-from bson import ObjectId
 
-class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return json.JSONEncoder.default(self, o)
+from ..logic.find_TILTs import *
+
+class Logic(object):
+
+    def getRiskScore(self, domain):
+        find = FindTILTs()
+
+        return { "RiskScore": len(find.findTILTs(domain)) }
