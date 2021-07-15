@@ -2,7 +2,6 @@ import pymongo as pymongo
 import re
 
 from ..common.constants import *
-from .json_encoder import *
 
 # pymongo connecting to mongoDB
 client = pymongo.MongoClient(
