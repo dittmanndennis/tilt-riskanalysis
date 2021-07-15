@@ -18,24 +18,9 @@ class FindTILTs(object):
     def findTILTs(self, domain):
         this = FindTILTs()
         tilts = []
-        prevTILTs = []
+        prevTILTs = [ domain ]
         nextTILTs = []
         visitedTILTs = [ domain ]
-
-        tilt = this.nextTILT(domain)
-        tilts.append(tilt)
-
-        for dataDisclosed in tilts[0]["dataDisclosed"]:
-            for recipient in dataDisclosed["recipients"]:
-                if "domain" not in recipient:
-                    continue
-                if recipient["domain"] not in visitedTILTs:
-                    nextTILTs.append(recipient["domain"])
-                    visitedTILTs.append(recipient["domain"])
-        
-        prevTILTs.clear()
-        prevTILTs = nextTILTs.copy()
-        nextTILTs.clear()
 
         while len(prevTILTs) > 0:
 
