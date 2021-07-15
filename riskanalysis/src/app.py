@@ -1,14 +1,6 @@
 import falcon.asgi
 
-import pymongo as pymongo
-from pymongo.errors import ConnectionFailure
-
-from pprint import pprint
-
 from .resource.tilt_resource import *
-from .common.constants import *
-
-from .tilt import *
 
 # swagger ui - NO ASGI SUPPORT YET
 #from falcon_swagger_ui import register_swaggerui_app
