@@ -12,12 +12,12 @@ class SharingNetworks(object):
 
         return result
 
-    def createSharingNetwork(tilts):
+    def createSharingNetwork(domain):
         session = driver.session()
 
         tx = session.begin_transaction()
 
-        result = tx.run()   # Example: "CREATE (a:Person { name: $name }) RETURN id(a) AS node_id", name="Some String"
+        result = tx.run("CREATE (tilt:Domain {name: $name}) RETURN id(tilt) AS node_id", name=domain)
         record = result.single()
 
         tx.commit()
