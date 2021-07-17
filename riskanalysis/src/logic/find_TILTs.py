@@ -41,6 +41,62 @@ class FindTILTs(object):
 
         return tilts
 
+    def findDomains(self, domain):
+        this = FindTILTs()
+        prevTILTs = [ domain ]
+        nextTILTs = []
+        visitedTILTs = [ domain ]
+
+        while len(prevTILTs) > 0:
+
+            for domain in prevTILTs:
+                nextTILT = this.nextTILT(domain)
+                if nextTILT != None:
+                    for dataDisclosed in nextTILT["dataDisclosed"]:
+                        for recipient in dataDisclosed["recipients"]:
+                            if "domain" not in recipient:
+                                continue
+                            if recipient["domain"] not in visitedTILTs:
+                                nextTILTs.append(recipient["domain"])
+                                visitedTILTs.append(recipient["domain"])
+            
+            prevTILTs.clear()
+            prevTILTs = nextTILTs.copy()
+            nextTILTs.clear()
+
+        return visitedTILTs
+
+    def findConnections(self, domain):
+        this = FindTILTs()
+        currentDomain = domain
+        connections = []
+        prevTILTs = [ domain ]
+        nextTILTs = []
+        visitedTILTs = [ domain ]
+
+        while len(prevTILTs) > 0:
+
+            for domain in prevTILTs:
+                nextTILT = this.nextTILT(domain)
+                if nextTILT != None:
+                    currentDomain = domain
+                    for dataDisclosed in nextTILT["dataDisclosed"]:
+                        for recipient in dataDisclosed["recipients"]:
+                            if "domain" not in recipient:
+                                continue
+                            if recipient["domain"] not in visitedTILTs:
+                                nextTILTs.append(recipient["domain"])
+                                visitedTILTs.append(recipient["domain"])
+                                connections.append([currentDomain, recipient["domain"]])
+                            else:
+                                connections.append([currentDomain, recipient["domain"]])
+            
+            prevTILTs.clear()
+            prevTILTs = nextTILTs.copy()
+            nextTILTs.clear()
+
+        return connections
+
     def nextTILT(self, domain):
         try:
             return tiltCollection.find_one( { "meta.url": re.compile(domain + "/|" + domain + "$") } )
