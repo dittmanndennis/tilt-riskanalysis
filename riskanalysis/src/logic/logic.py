@@ -13,6 +13,7 @@ class Logic(object):
         tilts = find.findTILTs(domain)
         domains = find.findDomains(domain)
         connections = find.findConnections(domain)
+        print(connections)
         sharing.createSharingNetwork(domains, connections)
         
         return { "RiskScore": len(tilts) }

@@ -1,8 +1,10 @@
 from neo4j import GraphDatabase
+from py2neo import Graph
 
 from ..common.constants import *
 
 driver = GraphDatabase.driver(NEO4J['URI'])
+#graph = Graph(NEO4J['URI'])
 
 class SharingNetworks(object):
 
@@ -11,6 +13,20 @@ class SharingNetworks(object):
         result = None# = this.createSharingNetwork(domains)
 
         return result
+
+    def getDomain(self, domain):
+        session = driver.session()
+
+        tx = session.begin_transaction()
+
+        result = tx.run("CREATE ($domain:Domain {data_type: $domain, industrial_sector: $domain, organization_size: $domain}) RETURN id($domain) AS node_id", domain=domain)
+        record = result.single()    #.value()
+
+        tx.commit()
+        tx.close()
+
+        session.close()
+        return record
 
     def createSharingNetwork(self, domains, connections):
         this = SharingNetworks()

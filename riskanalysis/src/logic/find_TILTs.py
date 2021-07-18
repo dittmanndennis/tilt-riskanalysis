@@ -73,6 +73,7 @@ class FindTILTs(object):
         prevTILTs = [ domain ]
         nextTILTs = []
         visitedTILTs = [ domain ]
+        currentVisitedTILTs = []
 
         while len(prevTILTs) > 0:
 
@@ -87,10 +88,11 @@ class FindTILTs(object):
                             if recipient["domain"] not in visitedTILTs:
                                 nextTILTs.append(recipient["domain"])
                                 visitedTILTs.append(recipient["domain"])
-                                connections.append([currentDomain, recipient["domain"]])
-                            else:
+                            if recipient["domain"] not in currentVisitedTILTs:
+                                currentVisitedTILTs.append(recipient["domain"])
                                 connections.append([currentDomain, recipient["domain"]])
             
+            currentVisitedTILTs.clear()
             prevTILTs.clear()
             prevTILTs = nextTILTs.copy()
             nextTILTs.clear()
