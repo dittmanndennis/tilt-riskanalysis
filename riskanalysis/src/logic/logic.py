@@ -8,8 +8,6 @@ class Logic(object):
         find = FindTILTs()
         sharing = SharingNetworks()
 
-        #existingNetworks = sharing.getSharingNetworks(domain)
-        #if len(existingNetworks<1):
         tilts = find.findTILTs(domain)
         domains = find.findDomains(domain)
         connections = find.findConnections(domain)

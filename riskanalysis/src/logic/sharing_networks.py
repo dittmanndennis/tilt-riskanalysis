@@ -6,12 +6,6 @@ graph = Graph(NEO4J['URI'])
 
 class SharingNetworks(object):
 
-    def getSharingNetworks(self, domain):
-        this = SharingNetworks()
-        result = None# = this.createSharingNetwork(domains)
-
-        return result
-
     def getDomain(self, domain):
         return graph.nodes.match("Domain", domain=domain).first()
 
@@ -29,19 +23,14 @@ class SharingNetworks(object):
 
     def createSharingNetwork(self, domains, connections):
         this = SharingNetworks()
-        ids = []
 
         for domain in domains:
             if(not this.existsDomain(domain)):
-                ids.append(this.createNode(domain))
+                this.createNode(domain)
 
         for connection in connections:
             if(not this.existsConnection(connection)):
-                ids.append(this.createEdge(connection))
-
-        print(ids)
-
-        return len(ids)>0
+                this.createEdge(connection)
 
     def createNode(self, domain):
         tx = graph.begin()
