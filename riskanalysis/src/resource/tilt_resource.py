@@ -20,11 +20,11 @@ class TILTResource:
                 doc = logic.getRiskScore(domain)
                 if doc == None:
                     doc = { "error": "TILT not found" }
-                    doc = JSONEncoder().encode(doc)
+                    #doc = JSONEncoder().encode(doc)
                     resp.text = json.dumps(doc, ensure_ascii=False)
                     resp.status = falcon.HTTP_404
                 else:
-                    doc = JSONEncoder().encode(doc)
+                    #doc = JSONEncoder().encode(doc)
                     resp.text = json.dumps(doc, ensure_ascii=False)
                     resp.status = falcon.HTTP_200
             else:
@@ -34,6 +34,6 @@ class TILTResource:
                 resp.status = falcon.HTTP_404
         except Exception as e:
             doc = { "error": e }
-            doc = JSONEncoder().encode(doc)
+            #doc = JSONEncoder().encode(doc)
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_404
