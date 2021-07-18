@@ -1,10 +1,8 @@
-from neo4j import GraphDatabase
-from py2neo import Graph
+from py2neo import Graph, Node, Relationship
 
 from ..common.constants import *
 
-driver = GraphDatabase.driver(NEO4J['URI'])
-#graph = Graph(NEO4J['URI'])
+graph = Graph(NEO4J['URI'])
 
 class SharingNetworks(object):
 
@@ -15,57 +13,51 @@ class SharingNetworks(object):
         return result
 
     def getDomain(self, domain):
-        session = driver.session()
+        return graph.nodes.match("Domain", domain=domain).first()
 
-        tx = session.begin_transaction()
+    def existsDomain(self, domain):
+        return len(SharingNetworks().getDomain(domain))>0
 
-        result = tx.run("CREATE ($domain:Domain {data_type: $domain, industrial_sector: $domain, organization_size: $domain}) RETURN id($domain) AS node_id", domain=domain)
-        record = result.single()    #.value()
+    def getConnection(self, connection):
+        this = SharingNetworks()
+        a = this.getDomain(connection[0])
+        b = this.getDomain(connection[1])
+        return graph.relationships.match((a, b)).first()    #graph.relationships.match((a, b), "SEND_DATA_TO").first()
 
-        tx.commit()
-        tx.close()
-
-        session.close()
-        return record
+    def existsConnection(self, connection):
+        return len(SharingNetworks().getConnection(connection))>0
 
     def createSharingNetwork(self, domains, connections):
         this = SharingNetworks()
         ids = []
 
         for domain in domains:
-            ids.append(this.createNode(domain))
+            if(not this.existsDomain(domain)):
+                ids.append(this.createNode(domain))
 
         for connection in connections:
-            ids.append(this.createEdge(connection))
+            if(not this.existsConnection(connection)):
+                ids.append(this.createEdge(connection))
 
         print(ids)
 
         return len(ids)>0
 
     def createNode(self, domain):
-        session = driver.session()
+        tx = graph.begin()
 
-        tx = session.begin_transaction()
-
-        result = tx.run("CREATE ($domain:Domain {data_type: $domain, industrial_sector: $domain, organization_size: $domain}) RETURN id($domain) AS node_id", domain=domain)
-        record = result.single()    #.value()
+        a = Node("Domain", domain=domain)
+        tx.create(a)
 
         tx.commit()
-        tx.close()
-
-        session.close()
-        return record
 
     def createEdge(self, connection):
-        session = driver.session()
+        tx = graph.begin()
 
-        tx = session.begin_transaction()
+        a = graph.nodes.match("Domain", domain=connection[0]).first()
+        b = graph.nodes.match("Domain", domain=connection[1]).first()
 
-        result = tx.run("MATCH ($domain1:Domain), ($domain2:Domain) CREATE ($domain1)-[r:SENDS_DATA_TO]->($domain2) RETURN type(r)", domain1=connection[0], domain2=connection[1])
-        record = result.single()    #.value()
+        ab = Relationship(a, "SENDS_DATA_TO", b)
+        tx.create(ab)
 
         tx.commit()
-        tx.close()
-
-        session.close()
-        return record
