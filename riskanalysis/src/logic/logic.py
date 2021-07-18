@@ -12,5 +12,7 @@ class Logic(object):
         domains = find.findDomains(domain)
         connections = find.findConnections(domain)
         sharing.createSharingNetwork(domains, connections)
+
+        # get subgraph
         
         return { "RiskScore": len(tilts) }

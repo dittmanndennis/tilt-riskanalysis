@@ -2,16 +2,19 @@ from py2neo import Graph, Node, Relationship
 
 from ..common.constants import *
 
+# connects to the Neo4j instance
 graph = Graph(NEO4J['URI'])
 
 class SharingNetworks(object):
 
+    # returns the first matching node to the given domain
     def getDomain(self, domain):
         return graph.nodes.match("Domain", domain=domain).first()
 
     def existsDomain(self, domain):
         return len(SharingNetworks().getDomain(domain))>0
 
+    # returns the first matching relationship to the given connection
     def getConnection(self, connection):
         this = SharingNetworks()
         a = this.getDomain(connection[0])
@@ -21,6 +24,7 @@ class SharingNetworks(object):
     def existsConnection(self, connection):
         return len(SharingNetworks().getConnection(connection))>0
 
+    # creates a sharing network with createNode() and createRelationship()
     def createSharingNetwork(self, domains, connections):
         this = SharingNetworks()
 
@@ -30,8 +34,9 @@ class SharingNetworks(object):
 
         for connection in connections:
             if(not this.existsConnection(connection)):
-                this.createEdge(connection)
+                this.createRelationship(connection)
 
+    # creates a node in the default database of the Neo4j instance
     def createNode(self, domain):
         tx = graph.begin()
 
@@ -40,7 +45,8 @@ class SharingNetworks(object):
 
         tx.commit()
 
-    def createEdge(self, connection):
+    # creates a relationship in the default database of the Neo4j instance
+    def createRelationship(self, connection):
         tx = graph.begin()
 
         a = graph.nodes.match("Domain", domain=connection[0]).first()
