@@ -24,6 +24,10 @@ class SharingNetworks(object):
     def existsConnection(self, connection):
         return len(SharingNetworks().getConnection(connection))>0
 
+    def getChildNodes(self, parentDomain):
+        query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN p,d'
+        return graph.run(query).data()
+
     # creates a sharing network with createNode() and createRelationship()
     def createSharingNetwork(self, domains, connections):
         this = SharingNetworks()
