@@ -1,4 +1,5 @@
 from py2neo import Graph, Node, Relationship
+from collections import Counter
 
 from ..common.constants import *
 
@@ -49,6 +50,18 @@ class SharingNetworks(object):
         if nodes is None:
             return 0
         return len(nodes)
+
+    # https://stackoverflow.com/questions/53629951/find-cluster-in-neo4j
+    def getCluster(self, parentDomain):
+        query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN p.domain'
+        data = graph.run(query).data()
+
+        nodes = []
+        for node in data:
+            nodes.append(node["p.domain"])
+        
+        count = Counter(nodes)
+        print(count)
 
     # creates a sharing network with createNode() and createRelationship()
     def createSharingNetwork(self, domains, connections):
