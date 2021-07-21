@@ -32,14 +32,23 @@ class SharingNetworks(object):
     # https://stackoverflow.com/questions/44237316/get-all-childs-of-a-particular-node-till-a-particular-depth
     # https://stackoverflow.com/questions/60701818/how-to-get-all-child-nodes-of-a-node
     def getChildNodes(self, parentDomain):
-        query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN p,d'
-        return graph.run(query).data()
+        query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN p.domain'
+        nodes = graph.run(query).data()
 
-    def getChildRelationships(self, parentDomain):
-        this = SharingNetworks()
-        nodes = this.getChildNodes(parentDomain)
+        childNodes = []
+        visitedNodes = []
         for node in nodes:
-            print(node)
+            if node["p.domain"] not in visitedNodes:
+                childNodes.append(node["p.domain"])
+                visitedNodes.append(node["p.domain"])
+        return childNodes
+
+    def getNumberChildRelationships(self, parentDomain):
+        query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN p.domain'
+        nodes = graph.run(query).data()
+        if nodes is None:
+            return 0
+        return len(nodes)
 
     # creates a sharing network with createNode() and createRelationship()
     def createSharingNetwork(self, domains, connections):
