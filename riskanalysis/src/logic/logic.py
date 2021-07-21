@@ -14,6 +14,8 @@ class Logic(object):
         sharing.createSharingNetwork(domains, connections)
 
         # get subgraph
-        sharing.getChildNodes(domain)
+        childNodes = sharing.getChildNodes(domain)
+        print(childNodes)
+        sharing.getChildRelationships(domain)
         
         return { "RiskScore": len(tilts) }
