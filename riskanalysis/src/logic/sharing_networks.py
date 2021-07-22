@@ -55,6 +55,7 @@ class SharingNetworks(object):
     # https://medium.com/neo4j/k-means-clustering-with-neo4j-b0ec54bf0103
     # https://stackoverflow.com/questions/53629951/find-cluster-in-neo4j
     # https://stackoverflow.com/questions/49134739/how-to-return-top-n-biggest-cluster-in-neo4j
+    # https://wiki.htw-berlin.de/confluence/display/~iclassen/graph
     def getCluster(self, parentDomain):
         query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN p.domain'
         data = graph.run(query).data()
