@@ -8,11 +8,13 @@ class Logic(object):
         find = FindTILTs()
         sharing = SharingNetworks()
 
-        #existingNetworks = sharing.getSharingNetworks(domain)
-        #if len(existingNetworks<1):
         tilts = find.findTILTs(domain)
         domains = find.findDomains(domain)
         connections = find.findConnections(domain)
         sharing.createSharingNetwork(domains, connections)
+
+        # get subgraph
+        childNodes = sharing.getChildNodes(domain)
+        numberChildNodes = sharing.getNumberChildRelationships(domain)
         
         return { "RiskScore": len(tilts) }

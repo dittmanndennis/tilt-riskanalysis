@@ -1,11 +1,9 @@
 import falcon
-import pymongo as pymongo
-import re
 import json
 
 from ..common.constants import *
 from ..logic.logic import *
-from ..logic.json_encoder import *
+from .json_encoder import *
 
 # Falcon follows the REST architectural style, meaning (among
 # other things) that you think in terms of resources and state

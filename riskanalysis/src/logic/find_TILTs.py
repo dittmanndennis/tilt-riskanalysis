@@ -14,6 +14,7 @@ tiltCollection = client["RiskAnalysis"]["tilt"]
 
 class FindTILTs(object):
 
+    # returns all tilt documents that are part of the given domains subgraph
     def findTILTs(self, domain):
         this = FindTILTs()
         tilts = []
@@ -41,6 +42,7 @@ class FindTILTs(object):
 
         return tilts
 
+    # returns all domains that are part of the given domains subgraph
     def findDomains(self, domain):
         this = FindTILTs()
         prevTILTs = [ domain ]
@@ -66,6 +68,7 @@ class FindTILTs(object):
 
         return visitedTILTs
 
+    # returns all connections that are part of the given domains subgraph
     def findConnections(self, domain):
         this = FindTILTs()
         currentDomain = domain
@@ -99,6 +102,7 @@ class FindTILTs(object):
 
         return connections
 
+    # returns the tilt document of the given domain
     def nextTILT(self, domain):
         try:
             return tiltCollection.find_one( { "meta.url": re.compile(domain + "/|" + domain + "$") } )
