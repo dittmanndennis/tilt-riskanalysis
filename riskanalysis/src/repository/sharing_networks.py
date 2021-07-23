@@ -71,7 +71,7 @@ class SharingNetworks(object):
     def createSharingNetwork(self, domains, connections):
         this = SharingNetworks()
 
-        if(len(domains)>0 and len(connections)>0):
+        if(domains is not None and connections is not None):
             for domain in domains:
                 if(not this.existsDomain(domain)):
                     this.createNode(domain)

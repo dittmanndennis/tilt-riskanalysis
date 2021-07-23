@@ -7,7 +7,6 @@ class Controller(object):
         find = FindTILTs()
         sharing = SharingNetworks()
 
-        tilts = find.findTILTs(domain)
         domains = find.findDomains(domain)
         connections = find.findConnections(domain)
         sharing.createSharingNetwork(domains, connections)
@@ -16,4 +15,6 @@ class Controller(object):
         childNodes = sharing.getChildNodes(domain)
         numberChildNodes = sharing.getNumberChildRelationships(domain)
         
-        return { "RiskScore": len(tilts) }
+        if domains is None:
+            return { "RiskScore": domains }
+        return { "RiskScore": len(domains) }
