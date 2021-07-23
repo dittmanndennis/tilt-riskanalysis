@@ -1,8 +1,7 @@
+from ..repository.find_TILTs import *
+from ..repository.sharing_networks import *
 
-from riskanalysis.src.logic.sharing_networks import SharingNetworks
-from ..logic.find_TILTs import *
-
-class Logic(object):
+class Controller(object):
 
     def getRiskScore(self, domain):
         find = FindTILTs()

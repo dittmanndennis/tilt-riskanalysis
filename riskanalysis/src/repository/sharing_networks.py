@@ -71,13 +71,14 @@ class SharingNetworks(object):
     def createSharingNetwork(self, domains, connections):
         this = SharingNetworks()
 
-        for domain in domains:
-            if(not this.existsDomain(domain)):
-                this.createNode(domain)
+        if(len(domains)>0 and len(connections)>0):
+            for domain in domains:
+                if(not this.existsDomain(domain)):
+                    this.createNode(domain)
 
-        for connection in connections:
-            if(not this.existsConnection(connection)):
-                this.createRelationship(connection)
+            for connection in connections:
+                if(not this.existsConnection(connection)):
+                    this.createRelationship(connection)
 
     # creates a node in the default database of the Neo4j instance
     def createNode(self, domain):

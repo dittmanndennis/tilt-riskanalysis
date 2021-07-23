@@ -105,7 +105,7 @@ class FindTILTs(object):
     # returns the tilt document of the given domain
     def nextTILT(self, domain):
         try:
-            return tiltCollection.find_one( { "meta.url": re.compile(domain + "/|" + domain + "$") } )
+            return tiltCollection.find_one( { "meta.url": re.compile("\/" + domain + "/|" + "\." + domain + "/|\/" + domain + "$" + "|\." + domain + "$") } )
         except Exception as e:
             print(e)
             return None
