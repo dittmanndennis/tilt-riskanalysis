@@ -1,6 +1,6 @@
 import falcon.asgi
 
-from .resource.tilt_resource import *
+from .api.tilt_resource import *
 
 # swagger ui - NO ASGI SUPPORT YET
 #from falcon_swagger_ui import register_swaggerui_app

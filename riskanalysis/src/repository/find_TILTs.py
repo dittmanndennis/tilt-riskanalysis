@@ -17,6 +17,8 @@ class FindTILTs(object):
     # returns all tilt documents that are part of the given domains subgraph
     def findTILTs(self, domain):
         this = FindTILTs()
+        if this.nextTILT(domain) == None:
+            return None
         tilts = []
         prevTILTs = [ domain ]
         nextTILTs = []
@@ -45,6 +47,8 @@ class FindTILTs(object):
     # returns all domains that are part of the given domains subgraph
     def findDomains(self, domain):
         this = FindTILTs()
+        if this.nextTILT(domain) == None:
+            return None
         prevTILTs = [ domain ]
         nextTILTs = []
         visitedTILTs = [ domain ]
@@ -71,6 +75,8 @@ class FindTILTs(object):
     # returns all connections that are part of the given domains subgraph
     def findConnections(self, domain):
         this = FindTILTs()
+        if this.nextTILT(domain) == None:
+            return None
         currentDomain = domain
         connections = []
         prevTILTs = [ domain ]
@@ -105,7 +111,7 @@ class FindTILTs(object):
     # returns the tilt document of the given domain
     def nextTILT(self, domain):
         try:
-            return tiltCollection.find_one( { "meta.url": re.compile(domain + "/|" + domain + "$") } )
+            return tiltCollection.find_one( { "meta.url": re.compile("\/" + domain + "/|" + "\." + domain + "/|\/" + domain + "$" + "|\." + domain + "$") } )
         except Exception as e:
             print(e)
             return None

@@ -2,7 +2,7 @@ import falcon
 import json
 
 from ..common.constants import *
-from ..logic.logic import *
+from ..controller.controller import *
 from .json_encoder import *
 
 # Falcon follows the REST architectural style, meaning (among
@@ -14,10 +14,10 @@ class TILTResource:
     async def on_get(self, req, resp, domain):
         try:
             if len(domain)>0:
-                logic = Logic()
-                doc = logic.getRiskScore(domain)
-                if doc == None:
-                    doc = { "error": "TILT not found" }
+                controller = Controller()
+                doc = controller.getRiskScore(domain)
+                if doc["RiskScore"] == None:
+                    doc = { "ERROR": "TILT not found" }
                     #doc = JSONEncoder().encode(doc)
                     resp.text = json.dumps(doc, ensure_ascii=False)
                     resp.status = falcon.HTTP_404
@@ -26,12 +26,12 @@ class TILTResource:
                     resp.text = json.dumps(doc, ensure_ascii=False)
                     resp.status = falcon.HTTP_200
             else:
-                doc = { "error": "TILT not found" }
+                doc = { "ERROR": "TILT not found" }
                 doc = JSONEncoder().encode(doc)
                 resp.text = json.dumps(doc, ensure_ascii=False)
                 resp.status = falcon.HTTP_404
         except Exception as e:
-            doc = { "error": e }
+            doc = { "ERROR": e }
             #doc = JSONEncoder().encode(doc)
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_404

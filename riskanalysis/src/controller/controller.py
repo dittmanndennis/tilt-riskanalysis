@@ -1,14 +1,12 @@
+from ..repository.find_TILTs import *
+from ..repository.sharing_networks import *
 
-from riskanalysis.src.logic.sharing_networks import SharingNetworks
-from ..logic.find_TILTs import *
-
-class Logic(object):
+class Controller(object):
 
     def getRiskScore(self, domain):
         find = FindTILTs()
         sharing = SharingNetworks()
 
-        tilts = find.findTILTs(domain)
         domains = find.findDomains(domain)
         connections = find.findConnections(domain)
         sharing.createSharingNetwork(domains, connections)
@@ -17,4 +15,6 @@ class Logic(object):
         childNodes = sharing.getChildNodes(domain)
         numberChildNodes = sharing.getNumberChildRelationships(domain)
         
-        return { "RiskScore": len(tilts) }
+        if domains is None:
+            return { "RiskScore": domains }
+        return { "RiskScore": len(domains) }
