@@ -2,10 +2,12 @@ version: "3.9"
 services:
     web:
         build: riskanalysis/
+        container_name: riskanalysis-api
         ports:
             - "8000:8000"
     neo4j:
         image: "neo4j:latest"
+        container_name: riskanalysis-neo4j
         ports:
             - "7474:7474"   #HTTP
             - "7473:7473"   #HTTPS
@@ -14,7 +16,7 @@ services:
             - NEO4J_AUTH=none
     mongo:
         image: mongo
-        container_name: mongo
+        container_name: riskanalysis-mongo
         ports:
             - "27017:27017"
         environment:
@@ -23,6 +25,7 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: SuperSecret
     mongo-express:
         image: mongo-express
+        container_name: riskanalysis-mongo-express
         ports:
             - "8081:8081"
         environment:

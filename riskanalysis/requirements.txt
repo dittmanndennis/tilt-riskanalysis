@@ -1,4 +1,5 @@
 uvicorn
 falcon
-mongoengine
+pymongo
+py2neo
 falcon-swagger-ui
