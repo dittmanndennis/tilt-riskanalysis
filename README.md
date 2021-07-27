@@ -1,10 +1,10 @@
 # RiskAnalysis
 
-uvicorn --reload riskanalysis.src.app:app
+Without Docker:
 
-http localhost:8000/{domain}
+  uvicorn --reload riskanalysis.src.app:app
 
-Docker:
+With Docker:
 
   sudo docker build . -t <tag>
   
@@ -15,3 +15,7 @@ Docker:
   sudo docker start {container-id}
   
     -> sudo docker ps (-a)
+
+Call API:
+  
+  http localhost:8000/{domain}
