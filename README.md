@@ -14,4 +14,4 @@ Docker:
   
   sudo docker start {container-id}
   
-    -> sudo docker ps -a
+    -> sudo docker ps (-a)
