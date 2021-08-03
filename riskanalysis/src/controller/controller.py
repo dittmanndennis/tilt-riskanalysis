@@ -9,13 +9,11 @@ class Controller(object):
 
         domains = find.findDomains(domain)
         childNodes = sharing.getChildNodes(domain)
-
-        print(domains)
-        print(childNodes)
         
         if domains is not None and len(domains) is not len(childNodes):
             connections = find.findConnections(domain)
-            sharing.createSharingNetwork(domains, connections)
+            properties = find.findProperties(domain)
+            sharing.createSharingNetwork(domains, connections, properties)
 
             # get subgraph
             numberChildNodes = sharing.getNumberChildRelationships(domain)

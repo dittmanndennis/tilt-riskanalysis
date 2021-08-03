@@ -68,25 +68,26 @@ class SharingNetworks(object):
         print(count)
 
     # creates a sharing network with createNode() and createRelationship()
-    def createSharingNetwork(self, domains, connections):
+    def createSharingNetwork(self, domains, connections, properties):
         this = SharingNetworks()
 
         if(domains is not None and connections is not None):
-            for domain in domains:
-                if(not this.existsDomain(domain)):
-                    this.createNode(domain)
+            for property in properties:
+                if(not this.existsDomain(property[0])):
+                    this.createNode(property)
 
             for connection in connections:
                 if(not this.existsConnection(connection)):
                     this.createRelationship(connection)
 
     # creates a node in the default database of the Neo4j instance
-    def createNode(self, domain):
+    # {0: domain}, {1: country}, {2: numberOfBreaches}, {3: severityOfBreaches}, {4: dataTypeShared[]}, {5: marketCapitalization}, {6: industrialSector}
+    def createNode(self, properties):
         tx = graph.begin()
-
-        a = Node("Domain", domain=domain)
+        
+        a = Node("Domain", domain=properties[0], country=properties[1], numberOfBreaches=properties[2], severityOfBreaches=properties[3], dataTypes=properties[4], marketCapitalization=properties[5], industrialSector=properties[6])
         tx.create(a)
-
+        
         tx.commit()
 
     # creates a relationship in the default database of the Neo4j instance

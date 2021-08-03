@@ -72,6 +72,44 @@ class FindTILTs(object):
 
         return visitedTILTs
 
+    # returns all graph properties that are part of the given domains subgraph
+    def findProperties(self, domain):
+        this = FindTILTs()
+        if this.nextTILT(domain) == None:
+            return None
+        prevTILTs = [ domain ]
+        nextTILTs = []
+        visitedTILTs = [ domain ]
+        # {0: domain}, {1: country}, {2: numberOfBreaches}, {3: severityOfBreaches}, {4: dataTypeShared[]}, {5: marketCapitalization}, {6: industrialSector}
+        properties = []
+
+        while len(prevTILTs) > 0:
+
+            for domain in prevTILTs:
+                
+                nextTILT = this.nextTILT(domain)
+                if nextTILT != None:
+                    
+                    dataTypes = []
+                    country = nextTILT["controller"]["country"]
+                    
+                    for dataDisclosed in nextTILT["dataDisclosed"]:
+                        dataTypes.append(dataDisclosed["category"])
+                        for recipient in dataDisclosed["recipients"]:
+                            if "domain" not in recipient:
+                                continue
+                            if recipient["domain"] not in visitedTILTs:
+                                nextTILTs.append(recipient["domain"])
+                                visitedTILTs.append(recipient["domain"])
+                    
+                    properties.append([domain, country, 0, 0, dataTypes, 0, None])
+            
+            prevTILTs.clear()
+            prevTILTs = nextTILTs.copy()
+            nextTILTs.clear()
+
+        return properties
+
     # returns all connections that are part of the given domains subgraph
     def findConnections(self, domain):
         this = FindTILTs()
