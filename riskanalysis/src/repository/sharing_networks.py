@@ -68,10 +68,10 @@ class SharingNetworks(object):
         print(count)
 
     # creates a sharing network with createNode() and createRelationship()
-    def createSharingNetwork(self, domains, connections, properties):
+    def createSharingNetwork(self, properties, connections):
         this = SharingNetworks()
 
-        if(domains is not None and connections is not None):
+        if(properties is not None and connections is not None):
             for property in properties:
                 if(not this.existsDomain(property[0])):
                     this.createNode(property)

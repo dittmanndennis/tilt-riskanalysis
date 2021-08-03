@@ -92,7 +92,20 @@ class FindTILTs(object):
                     
                     dataTypes = []
                     country = nextTILT["controller"]["country"]
-                    
+                    numberOfBreaches = 0
+                    severityOfBreaches = 0
+                    marketCapitalization = 0
+                    industrialSector = ""
+                    if "riskAnalysis" in nextTILT:
+                        if "numberOfBreaches" in nextTILT["riskAnalysis"]:
+                            numberOfBreaches = nextTILT["riskAnalysis"]["numberOfBreaches"]
+                        if "severityOfBreaches" in nextTILT["riskAnalysis"]:
+                            severityOfBreaches = nextTILT["riskAnalysis"]["severityOfBreaches"]
+                        if "marketCapitalization" in nextTILT["riskAnalysis"]:
+                            marketCapitalization = nextTILT["riskAnalysis"]["marketCapitalization"]
+                        if "industrialSector" in nextTILT["riskAnalysis"]:
+                            industrialSector = nextTILT["riskAnalysis"]["industrialSector"]
+
                     for dataDisclosed in nextTILT["dataDisclosed"]:
                         dataTypes.append(dataDisclosed["category"])
                         for recipient in dataDisclosed["recipients"]:
@@ -102,7 +115,7 @@ class FindTILTs(object):
                                 nextTILTs.append(recipient["domain"])
                                 visitedTILTs.append(recipient["domain"])
                     
-                    properties.append([domain, country, 0, 0, dataTypes, 0, None])
+                    properties.append([domain, country, numberOfBreaches, severityOfBreaches, dataTypes, marketCapitalization, industrialSector])
             
             prevTILTs.clear()
             prevTILTs = nextTILTs.copy()

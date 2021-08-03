@@ -7,17 +7,16 @@ class Controller(object):
         find = FindTILTs()
         sharing = SharingNetworks()
 
-        domains = find.findDomains(domain)
+        properties = find.findProperties(domain)
         childNodes = sharing.getChildNodes(domain)
         
-        if domains is not None and len(domains) is not len(childNodes):
+        if properties is not None and len(properties) is not len(childNodes):
             connections = find.findConnections(domain)
-            properties = find.findProperties(domain)
-            sharing.createSharingNetwork(domains, connections, properties)
+            sharing.createSharingNetwork(properties, connections)
 
             # get subgraph
             numberChildNodes = sharing.getNumberChildRelationships(domain)
 
-            return { "RiskScore": len(domains) }
+            return { "RiskScore": len(properties) }
         
-        return { "RiskScore": domains }
+        return { "RiskScore": properties }
