@@ -15,8 +15,7 @@ class TILTResource:
     async def on_get(self, req, resp, domain):
         try:
             if val.domain(domain):
-                controller = Controller()
-                doc = controller.getRiskScore(domain)
+                doc = Controller().getRiskScore(domain)
                 if doc["RiskScore"] == None:
                     doc = { "ERROR": "TILT not found" }
                     #doc = JSONEncoder().encode(doc)

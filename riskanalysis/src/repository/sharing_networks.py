@@ -33,15 +33,15 @@ class SharingNetworks(object):
     # https://stackoverflow.com/questions/44237316/get-all-childs-of-a-particular-node-till-a-particular-depth
     # https://stackoverflow.com/questions/60701818/how-to-get-all-child-nodes-of-a-node
     def getChildNodes(self, parentDomain):
-        query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN p.domain'
+        query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN d.domain'
         nodes = graph.run(query).data()
 
         childNodes = []
         visitedNodes = []
         for node in nodes:
-            if node["p.domain"] not in visitedNodes:
-                childNodes.append(node["p.domain"])
-                visitedNodes.append(node["p.domain"])
+            if node["d.domain"] not in visitedNodes:
+                childNodes.append(node["d.domain"])
+                visitedNodes.append(node["d.domain"])
         return childNodes
 
     def getNumberChildRelationships(self, parentDomain):
