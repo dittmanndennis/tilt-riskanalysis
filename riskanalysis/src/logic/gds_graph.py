@@ -11,7 +11,13 @@ class Graph(object):
         graph.run("CALL gds.graph.drop('" + graph_name + "')")
 
     def createGraph(self, graph_name):
-        graph.run("CALL gds.graph.create('" + graph_name + "', 'Domain', {SENDS_DATA_TO: {orientation: 'UNDIRECTED'}})")
+        graph.run("CALL gds.graph.create('" + graph_name + "', 'Domain', {SENDS_DATA_TO: {orientation: 'REVERSE'}})")
 
     def writePageRank(self, graph_name):
         graph.run("CALL gds.pageRank.write('" + graph_name + "', {writeProperty: 'pageRank'})")
+
+    def writeArticleRank(self, graph_name):
+        graph.run("CALL gds.pageRank.write('" + graph_name + "', {writeProperty: 'articleRank'})")
+
+    def writeEigenvector(self, graph_name):
+        graph.run("CALL gds.eigenvector.write('" + graph_name + "', {writeProperty: 'eigenvector'})")
