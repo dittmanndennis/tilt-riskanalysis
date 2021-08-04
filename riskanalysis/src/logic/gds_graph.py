@@ -17,7 +17,7 @@ class Graph(object):
         graph.run("CALL gds.pageRank.write('" + graph_name + "', {writeProperty: 'pageRank'})")
 
     def writeArticleRank(self, graph_name):
-        graph.run("CALL gds.pageRank.write('" + graph_name + "', {writeProperty: 'articleRank'})")
+        graph.run("CALL gds.articleRank.write('" + graph_name + "', {writeProperty: 'articleRank'})")
 
     def writeEigenvector(self, graph_name):
         graph.run("CALL gds.eigenvector.write('" + graph_name + "', {writeProperty: 'eigenvector'})")
