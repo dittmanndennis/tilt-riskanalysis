@@ -28,6 +28,11 @@ class Graph(object):
         graph.run("CALL gds.eigenvector.write('" + graph_name + "', {writeProperty: 'eigenvector'})")
         Graph().__deleteGraph("eigenvector")
 
+    def writeCloseness(self, graph_name):
+        Graph().__createGraph("closeness")
+        graph.run("CALL gds.alpha.closeness.write('" + graph_name + "', {writeProperty: 'eigenvector'})")
+        Graph().__deleteGraph("closeness")
+
     def writeLouvain(self, graph_name):
         Graph().__createGraph("louvain")
         graph.run("CALL gds.louvain.write('" + graph_name + "', {writeProperty: 'louvain'})")
