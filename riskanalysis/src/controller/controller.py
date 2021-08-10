@@ -1,5 +1,6 @@
 from ..repository.find_TILTs import *
 from ..repository.sharing_networks import *
+from ..logic.gds_graph import *
 
 class Controller(object):
 
@@ -9,16 +10,15 @@ class Controller(object):
 
         properties = find.findProperties(domain)
         childNodes = sharing.getChildNodes(domain)
-        print(childNodes)
-        print(properties)
-        
-        if properties is not None and len(properties)-1 is not len(childNodes):
+
+        if properties is not None and (len(properties)-1 is not len(childNodes) or len(childNodes) == 0):
             connections = find.findConnections(domain)
+            #print(properties)
             sharing.createSharingNetwork(properties, connections)
 
             # get subgraph
             numberChildNodes = sharing.getNumberChildRelationships(domain)
 
-            return { "RiskScore": len(properties) }
-        
+            Graph().writeArticleRank()
+
         return { "RiskScore": properties }

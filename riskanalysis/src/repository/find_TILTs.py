@@ -1,5 +1,6 @@
 import pymongo as pymongo
 import re
+import requests as req
 
 from ..common.constants import *
 
@@ -72,6 +73,19 @@ class FindTILTs(object):
 
         return visitedTILTs
 
+    def getBreaches(self, domain):
+        data = req.get("https://haveibeenpwned.com/api/v3/breaches?domain=" + domain).json()
+        
+        breachCount = 0
+        averageSeverity = 0
+        for breach in data:
+            breachCount += 1
+            averageSeverity += breach["PwnCount"]
+        if breachCount != 0:
+            averageSeverity = averageSeverity/breachCount
+
+        return [breachCount, averageSeverity]
+
     # returns all graph properties that are part of the given domains subgraph
     def findProperties(self, domain):
         this = FindTILTs()
@@ -92,22 +106,29 @@ class FindTILTs(object):
                     
                     dataTypes = []
                     country = nextTILT["controller"]["country"]
-                    numberOfBreaches = 0
-                    severityOfBreaches = 0
+                    breaches = this.getBreaches(domain)
+                    numberOfBreaches = breaches[0]
+                    severityOfBreaches = breaches[1]
                     marketCapitalization = 0
                     industrialSector = ""
                     if "riskAnalysis" in nextTILT:
-                        if "numberOfBreaches" in nextTILT["riskAnalysis"]:
-                            numberOfBreaches = nextTILT["riskAnalysis"]["numberOfBreaches"]
-                        if "severityOfBreaches" in nextTILT["riskAnalysis"]:
-                            severityOfBreaches = nextTILT["riskAnalysis"]["severityOfBreaches"]
+                        #if "numberOfBreaches" in nextTILT["riskAnalysis"]:
+                            #numberOfBreaches = nextTILT["riskAnalysis"]["numberOfBreaches"]
+                        #if "severityOfBreaches" in nextTILT["riskAnalysis"]:
+                            #severityOfBreaches = nextTILT["riskAnalysis"]["severityOfBreaches"]
                         if "marketCapitalization" in nextTILT["riskAnalysis"]:
                             marketCapitalization = nextTILT["riskAnalysis"]["marketCapitalization"]
                         if "industrialSector" in nextTILT["riskAnalysis"]:
                             industrialSector = nextTILT["riskAnalysis"]["industrialSector"]
-
+                    
+                    maximumDataTypes = 8163
+                    lowerCaseTypes = []
                     for dataDisclosed in nextTILT["dataDisclosed"]:
-                        dataTypes.append(dataDisclosed["category"])
+                        if dataDisclosed["category"].lower() not in lowerCaseTypes:
+                            maximumDataTypes -= (2 + len(dataDisclosed["category"].encode('utf-8')))
+                            if maximumDataTypes >= 0:
+                                lowerCaseTypes.append(dataDisclosed["category"].lower())
+                                dataTypes.append(dataDisclosed["category"])
                         for recipient in dataDisclosed["recipients"]:
                             if "domain" not in recipient:
                                 continue
