@@ -13,7 +13,8 @@ class Graph(object):
     def __createGraph(self, graph_name):
         graph.run("CALL gds.graph.create('" + graph_name + "', 'Domain', {SENDS_DATA_TO: {orientation: 'REVERSE'}})")
 
-    def writePageRank(self, graph_name):
+    # depreciated by writeArticleRank
+    def __writePageRank(self, graph_name):
         Graph().__createGraph(graph_name)
         graph.run("CALL gds.pageRank.write('" + graph_name + "', {writeProperty: 'pageRank'})")
         Graph().__deleteGraph(graph_name)
