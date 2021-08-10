@@ -120,9 +120,15 @@ class FindTILTs(object):
                             marketCapitalization = nextTILT["riskAnalysis"]["marketCapitalization"]
                         if "industrialSector" in nextTILT["riskAnalysis"]:
                             industrialSector = nextTILT["riskAnalysis"]["industrialSector"]
-
+                    
+                    maximumDataTypes = 8163
+                    lowerCaseTypes = []
                     for dataDisclosed in nextTILT["dataDisclosed"]:
-                        dataTypes.append(dataDisclosed["category"])
+                        if dataDisclosed["category"].lower() not in lowerCaseTypes:
+                            maximumDataTypes -= (2 + len(dataDisclosed["category"].encode('utf-8')))
+                            if maximumDataTypes >= 0:
+                                lowerCaseTypes.append(dataDisclosed["category"].lower())
+                                dataTypes.append(dataDisclosed["category"])
                         for recipient in dataDisclosed["recipients"]:
                             if "domain" not in recipient:
                                 continue

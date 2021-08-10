@@ -14,14 +14,14 @@ class Graph(object):
         graph.run("CALL gds.graph.create('" + graph_name + "', 'Domain', {SENDS_DATA_TO: {orientation: 'REVERSE'}})")
 
     # depreciated by writeArticleRank
-    def writePageRank(self):
+    def __writePageRank(self):
         Graph().__createGraph("pageRankGraph")
         graph.run("CALL gds.pageRank.write('pageRankGraph', {writeProperty: 'pageRank'})")
         Graph().__deleteGraph("pageRankGraph")
 
     def writeArticleRank(self):
         Graph().__createGraph("articleRankGraph")
-        graph.run("CALL gds.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
+        graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
         Graph().__deleteGraph("articleRankGraph")
 
     def writeEigenvector(self):
