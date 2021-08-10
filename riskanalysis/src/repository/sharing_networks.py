@@ -44,6 +44,7 @@ class SharingNetworks(object):
                 visitedNodes.append(node["d.domain"])
         return childNodes
 
+    # get subgraph
     def getNumberChildRelationships(self, parentDomain):
         query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN p.domain'
         nodes = graph.run(query).data()
