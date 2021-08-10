@@ -9,8 +9,6 @@ class Controller(object):
 
         properties = find.findProperties(domain)
         childNodes = sharing.getChildNodes(domain)
-        print(childNodes)
-        print(properties)
         
         if properties is not None and len(properties)-1 is not len(childNodes):
             connections = find.findConnections(domain)
