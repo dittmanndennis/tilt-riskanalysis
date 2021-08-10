@@ -16,9 +16,7 @@ class Controller(object):
             #print(properties)
             sharing.createSharingNetwork(properties, connections)
 
-            # get subgraph
-            numberChildNodes = sharing.getNumberChildRelationships(domain)
-
             Graph().writeArticleRank()
 
+        Graph().writeLocalClusteringCoefficient()
         return { "RiskScore": properties }
