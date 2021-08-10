@@ -2,4 +2,6 @@ uvicorn
 falcon
 pymongo
 py2neo
+requests
+validators
 falcon-swagger-ui
