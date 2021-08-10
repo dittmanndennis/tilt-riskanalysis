@@ -14,53 +14,53 @@ class Graph(object):
         graph.run("CALL gds.graph.create('" + graph_name + "', 'Domain', {SENDS_DATA_TO: {orientation: 'REVERSE'}})")
 
     # depreciated by writeArticleRank
-    def __writePageRank(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.pageRank.write('" + graph_name + "', {writeProperty: 'pageRank'})")
-        Graph().__deleteGraph(graph_name)
+    def writePageRank(self):
+        Graph().__createGraph("pageRankGraph")
+        graph.run("CALL gds.pageRank.write('pageRankGraph', {writeProperty: 'pageRank'})")
+        Graph().__deleteGraph("pageRankGraph")
 
-    def writeArticleRank(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.alpha.articleRank.write('" + graph_name + "', {writeProperty: 'articleRank'})")
-        Graph().__deleteGraph(graph_name)
+    def writeArticleRank(self):
+        Graph().__createGraph("articleRankGraph")
+        graph.run("CALL gds.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
+        Graph().__deleteGraph("articleRankGraph")
 
-    def writeEigenvector(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.eigenvector.write('" + graph_name + "', {writeProperty: 'eigenvector'})")
-        Graph().__deleteGraph(graph_name)
+    def writeEigenvector(self):
+        Graph().__createGraph("eigenvectorGraph")
+        graph.run("CALL gds.eigenvector.write('eigenvectorGraph', {writeProperty: 'eigenvector'})")
+        Graph().__deleteGraph("eigenvectorGraph")
 
     # may not work
-    def writeCloseness(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.alpha.closeness.write('" + graph_name + "', {writeProperty: 'eigenvector'})")
-        Graph().__deleteGraph(graph_name)
+    def writeCloseness(self):
+        Graph().__createGraph("closenessGraph")
+        graph.run("CALL gds.alpha.closeness.write('closenessGraph', {writeProperty: 'eigenvector'})")
+        Graph().__deleteGraph("closenessGraph")
 
-    def writeLouvain(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.louvain.write('" + graph_name + "', {writeProperty: 'louvain'})")
-        Graph().__deleteGraph(graph_name)
+    def writeLouvain(self):
+        Graph().__createGraph("louvainGraph")
+        graph.run("CALL gds.louvain.write('louvainGraph', {writeProperty: 'louvain'})")
+        Graph().__deleteGraph("louvainGraph")
 
-    def writeLabelPropagation(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.labelPropagation.write('" + graph_name + "', {writeProperty: 'labelPropagation'})")
-        Graph().__deleteGraph(graph_name)
+    def writeLabelPropagation(self):
+        Graph().__createGraph("labelPropagationGraph")
+        graph.run("CALL gds.labelPropagation.write('labelPropagationGraph', {writeProperty: 'labelPropagation'})")
+        Graph().__deleteGraph("labelPropagationGraph")
 
-    def writeWeaklyConnectedComponents(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.wcc.write('" + graph_name + "', {writeProperty: 'wcc'})")
-        Graph().__deleteGraph(graph_name)
+    def writeWeaklyConnectedComponents(self):
+        Graph().__createGraph("weaklyConnectedComponentsGraph")
+        graph.run("CALL gds.wcc.write('weaklyConnectedComponentsGraph', {writeProperty: 'wcc'})")
+        Graph().__deleteGraph("weaklyConnectedComponentsGraph")
 
-    def writeTriangleCount(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.triangleCount.write('" + graph_name + "', {writeProperty: 'triangleCount'})")
-        Graph().__deleteGraph(graph_name)
+    def writeTriangleCount(self):
+        Graph().__createGraph("triangleCountGraph")
+        graph.run("CALL gds.triangleCount.write('triangleCountGraph', {writeProperty: 'triangleCount'})")
+        Graph().__deleteGraph("triangleCountGraph")
 
-    def writeLocalClusteringCoefficient(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.localClusteringCoefficient.write('" + graph_name + "', {writeProperty: 'localClusteringCoefficient'})")
-        Graph().__deleteGraph(graph_name)
+    def writeLocalClusteringCoefficient(self):
+        Graph().__createGraph("localClusteringCoefficientGraph")
+        graph.run("CALL gds.localClusteringCoefficient.write('localClusteringCoefficientGraph', {writeProperty: 'localClusteringCoefficient'})")
+        Graph().__deleteGraph("localClusteringCoefficientGraph")
 
-    def writeNodeSimilarity(self, graph_name):
-        Graph().__createGraph(graph_name)
-        graph.run("CALL gds.nodeSimilarity.write('" + graph_name + "', {writeRelationshipType: 'SIMILAR', writeProperty: 'similarity'})")
-        Graph().__deleteGraph(graph_name)
+    def writeNodeSimilarity(self):
+        Graph().__createGraph("nodeSimilarityGraph")
+        graph.run("CALL gds.nodeSimilarity.write('nodeSimilarityGraph', {writeRelationshipType: 'SIMILAR', writeProperty: 'similarity'})")
+        Graph().__deleteGraph("nodeSimilarityGraph")

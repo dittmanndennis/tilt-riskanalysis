@@ -18,6 +18,6 @@ class Controller(object):
             # get subgraph
             numberChildNodes = sharing.getNumberChildRelationships(domain)
         
-        Graph().writeArticleRank("articleRank")
+        Graph().writeArticleRank()
 
         return { "RiskScore": properties }
