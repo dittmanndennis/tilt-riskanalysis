@@ -21,7 +21,7 @@ class Graph(object):
 
     def writeArticleRank(self, graph_name):
         Graph().__createGraph(graph_name)
-        graph.run("CALL gds.articleRank.write('" + graph_name + "', {writeProperty: 'articleRank'})")
+        graph.run("CALL gds.alpha.articleRank.write('" + graph_name + "', {writeProperty: 'articleRank'})")
         Graph().__deleteGraph(graph_name)
 
     def writeEigenvector(self, graph_name):

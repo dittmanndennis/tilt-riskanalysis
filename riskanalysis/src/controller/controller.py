@@ -1,5 +1,6 @@
 from ..repository.find_TILTs import *
 from ..repository.sharing_networks import *
+from ..logic.gds_graph import *
 
 class Controller(object):
 
@@ -16,7 +17,7 @@ class Controller(object):
 
             # get subgraph
             numberChildNodes = sharing.getNumberChildRelationships(domain)
-
-            return { "RiskScore": len(properties) }
         
+        Graph().writeArticleRank("articleRank")
+
         return { "RiskScore": properties }
