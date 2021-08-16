@@ -7,11 +7,20 @@ graph = Graph(NEO4J['URI'])
 
 class Graph(object):
 
+    def distrinctLouvainCluster(self):
+        return graph.run("MATCH (n:Domain) RETURN DISTINCT n.louvain")
+
+    
+    #Graph Data Science Stuff
+
     def __deleteGraph(self, graph_name):
         graph.run("CALL gds.graph.drop('" + graph_name + "')")
 
     def __createGraph(self, graph_name, orientation):
         graph.run("CALL gds.graph.create('" + graph_name + "', 'Domain', {SENDS_DATA_TO: {orientation: '" + orientation + "'}})")
+
+    def __createLouvainGraph(self, graph_name, cluster):
+        graph.run("CALL gds.graph.create.cypher('" + graph_name + "', 'MATCH (n:Domain {louvain: " + cluster + "}) RETURN id(n) as id', 'MATCH (n)-->(m) RETURN id(n) AS source, id(m) AS target')")
 
     # depreciated by writeArticleRank
     def __writePageRank(self):
