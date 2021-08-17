@@ -112,4 +112,4 @@ class Graph(object):
         Graph().__deleteGraph("nodeSimilarityGraph")
 
     def writePearsonSimilarity(self):
-        graph.run("MATCH (n) WITH {item:id(n), weights: [n.closeness, n.articleRank]} AS userData WITH collect(userData) as data CALL gds.alpha.similarity.pearson.write({data: data, topK: 1, similarityCutoff: 0.1}) YIELD nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, stdDev, p25, p50, p75, p90, p95, p99, p999, p100 RETURN nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, p95")
+        graph.run("MATCH (n) WITH {item:id(n), weights: [n.articleRank, n.eigenvector, n.betweenness, n.degree, n.closeness]} AS userData WITH collect(userData) as data CALL gds.alpha.similarity.pearson.write({data: data, topK: 1, similarityCutoff: 0.1}) YIELD nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, stdDev, p25, p50, p75, p90, p95, p99, p999, p100 RETURN nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, p95")
