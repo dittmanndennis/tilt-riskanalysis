@@ -18,5 +18,15 @@ class Controller(object):
 
             Graph().writeArticleRank()
 
-        Graph().writeLocalClusteringCoefficient()
+        Graph().writeLouvain()
+        cluster = Graph().distinctLouvainCluster()
+        for c in cluster:
+            Graph().writeArticleRankCluster(c)
+            Graph().writeEigenvectorCluster(c)
+            Graph().writeBetweennessCluster(c)
+            Graph().writeDegreeCluster(c)
+            Graph().writeClosenessCluster(c)
+
+        
+
         return { "RiskScore": properties }

@@ -7,9 +7,11 @@ graph = Graph(NEO4J['URI'])
 
 class Graph(object):
 
-    def distrinctLouvainCluster(self):
+    def distinctLouvainCluster(self):
         return graph.run("MATCH (n:Domain) RETURN DISTINCT n.louvain")
 
+    def breachedDomains(self):
+        return graph.run("MATCH (n) WHERE n.numberOfBreaches>0 RETURN id(n)")
     
     #Graph Data Science Stuff
 
@@ -33,14 +35,49 @@ class Graph(object):
         graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
         Graph().__deleteGraph("articleRankGraph")
 
+    def writeArticleRankCluster(self, cluster):
+        Graph().__createGraph("articleRankGraph", cluster)
+        graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
+        Graph().__deleteGraph("articleRankGraph")
+
     def writeEigenvector(self):
         Graph().__createGraph("eigenvectorGraph", "REVERSE")
         graph.run("CALL gds.alpha.eigenvector.write('eigenvectorGraph', {writeProperty: 'eigenvector'})")
         Graph().__deleteGraph("eigenvectorGraph")
 
+    def writeEigenvectorCluster(self, cluster):
+        Graph().__createGraph("eigenvectorGraph", cluster)
+        graph.run("CALL gds.alpha.eigenvector.write('eigenvectorGraph', {writeProperty: 'eigenvector'})")
+        Graph().__deleteGraph("eigenvectorGraph")
+
+    def writeBetweenness(self):
+        Graph().__createGraph("betweennessGraph", "REVERSE")
+        graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
+        Graph().__deleteGraph("betweennessGraph")
+
+    def writeBetweennessCluster(self, cluster):
+        Graph().__createGraph("betweennessGraph", cluster)
+        graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
+        Graph().__deleteGraph("betweennessGraph")
+
+    def writeDegree(self):
+        Graph().__createGraph("degreeGraph", "REVERSE")
+        graph.run("CALL gds.degree.write('degreeGraph', { writeProperty: 'degree' })")
+        Graph().__deleteGraph("degreeGraph")
+
+    def writeDegreeCluster(self, cluster):
+        Graph().__createGraph("degreeGraph", cluster)
+        graph.run("CALL gds.degree.write('degreeGraph', { writeProperty: 'degree' })")
+        Graph().__deleteGraph("degreeGraph")
+
     # may not work
     def writeCloseness(self):
         Graph().__createGraph("closenessGraph", "REVERSE")
+        graph.run("CALL gds.alpha.closeness.write('closenessGraph', {writeProperty: 'closeness'})")
+        Graph().__deleteGraph("closenessGraph")
+
+    def writeClosenessCluster(self, cluster):
+        Graph().__createLouvainGraph("closenessGraph", cluster)
         graph.run("CALL gds.alpha.closeness.write('closenessGraph', {writeProperty: 'closeness'})")
         Graph().__deleteGraph("closenessGraph")
 
@@ -73,3 +110,6 @@ class Graph(object):
         Graph().__createGraph("nodeSimilarityGraph", "REVERSE")
         graph.run("CALL gds.nodeSimilarity.write('nodeSimilarityGraph', {writeRelationshipType: 'SIMILAR', writeProperty: 'similarity'})")
         Graph().__deleteGraph("nodeSimilarityGraph")
+
+    def writePearsonSimilarity(self):
+        graph.run("MATCH (n) WITH {item:id(n), weights: [n.closeness, n.articleRank]} AS userData WITH collect(userData) as data RETURN data")
