@@ -25,8 +25,8 @@ class Controller(object):
             Graph().writeEigenvectorCluster(c)
             Graph().writeBetweennessCluster(c)
             Graph().writeDegreeCluster(c)
+            print("Here")
             Graph().writeClosenessCluster(c)
-
-        
+            print("Here")
 
         return { "RiskScore": properties }

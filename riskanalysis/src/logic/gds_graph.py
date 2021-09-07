@@ -22,7 +22,7 @@ class Graph(object):
         graph.run("CALL gds.graph.create('" + graph_name + "', 'Domain', {SENDS_DATA_TO: {orientation: '" + orientation + "'}})")
 
     def __createLouvainGraph(self, graph_name, cluster):
-        graph.run("CALL gds.graph.create.cypher('" + graph_name + "', 'MATCH (n:Domain {louvain: " + cluster + "}) RETURN id(n) as id', 'MATCH (n)-->(m) RETURN id(n) AS source, id(m) AS target')")
+        graph.run("CALL gds.graph.create.cypher('" + graph_name + "', 'MATCH (n:Domain {louvain: " + str(cluster) + "}) RETURN id(n) as id', 'MATCH (n {louvain: " + str(cluster) + "})-[rel:SENDS_DATA_TO]->(m) RETURN id(n) AS source, id(m) AS target')")
 
     # depreciated by writeArticleRank
     def __writePageRank(self):
@@ -36,7 +36,7 @@ class Graph(object):
         Graph().__deleteGraph("articleRankGraph")
 
     def writeArticleRankCluster(self, cluster):
-        Graph().__createGraph("articleRankGraph", cluster)
+        Graph().__createLouvainGraph("articleRankGraph", cluster)
         graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
         Graph().__deleteGraph("articleRankGraph")
 
@@ -46,7 +46,7 @@ class Graph(object):
         Graph().__deleteGraph("eigenvectorGraph")
 
     def writeEigenvectorCluster(self, cluster):
-        Graph().__createGraph("eigenvectorGraph", cluster)
+        Graph().__createLouvainGraph("eigenvectorGraph", cluster)
         graph.run("CALL gds.alpha.eigenvector.write('eigenvectorGraph', {writeProperty: 'eigenvector'})")
         Graph().__deleteGraph("eigenvectorGraph")
 
@@ -56,7 +56,7 @@ class Graph(object):
         Graph().__deleteGraph("betweennessGraph")
 
     def writeBetweennessCluster(self, cluster):
-        Graph().__createGraph("betweennessGraph", cluster)
+        Graph().__createLouvainGraph("betweennessGraph", cluster)
         graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
         Graph().__deleteGraph("betweennessGraph")
 
@@ -66,20 +66,35 @@ class Graph(object):
         Graph().__deleteGraph("degreeGraph")
 
     def writeDegreeCluster(self, cluster):
-        Graph().__createGraph("degreeGraph", cluster)
+        print("Here")
+        Graph().__createLouvainGraph("degreeGraph", cluster)
+        print("Here")
         graph.run("CALL gds.degree.write('degreeGraph', { writeProperty: 'degree' })")
+        print("Here")
         Graph().__deleteGraph("degreeGraph")
+        print("Here")
 
-    # may not work
-    def writeCloseness(self):
+    # depreciated through writeHarmonicCloseness
+    def __writeCloseness(self):
         Graph().__createGraph("closenessGraph", "REVERSE")
         graph.run("CALL gds.alpha.closeness.write('closenessGraph', {writeProperty: 'closeness'})")
         Graph().__deleteGraph("closenessGraph")
 
-    def writeClosenessCluster(self, cluster):
+    # depreciated through writeHarmonicClosenessCluster
+    def __writeClosenessCluster(self, cluster):
         Graph().__createLouvainGraph("closenessGraph", cluster)
         graph.run("CALL gds.alpha.closeness.write('closenessGraph', {writeProperty: 'closeness'})")
         Graph().__deleteGraph("closenessGraph")
+
+    def writeHarmonicCloseness(self):
+        Graph().__createGraph("harmonicClosenessGraph", "REVERSE")
+        graph.run("CALL gds.alpha.closeness.harmonic.write('harmonicClosenessGraph', {writeProperty: 'harmonicCloseness'})")
+        Graph().__deleteGraph("harmonicClosenessGraph")
+
+    def writeHarmonicClosenessCluster(self, cluster):
+        Graph().__createLouvainGraph("harmonicClosenessGraph", cluster)
+        graph.run("CALL gds.alpha.closeness.harmonic.write('harmonicClosenessGraph', {writeProperty: 'harmonicCloseness'})")
+        Graph().__deleteGraph("harmonicClosenessGraph")
 
     def writeLouvain(self):
         Graph().__createGraph("louvainGraph", "REVERSE")
@@ -113,3 +128,9 @@ class Graph(object):
 
     def writePearsonSimilarity(self):
         graph.run("MATCH (n) WITH {item:id(n), weights: [n.articleRank, n.eigenvector, n.betweenness, n.degree, n.closeness]} AS userData WITH collect(userData) as data CALL gds.alpha.similarity.pearson.write({data: data, topK: 1, similarityCutoff: 0.1}) YIELD nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, stdDev, p25, p50, p75, p90, p95, p99, p999, p100 RETURN nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, p95")
+
+    def trainNodeClassification(self):
+        graph.run()
+
+    def writeNodeClassification(self):
+        graph.run()
