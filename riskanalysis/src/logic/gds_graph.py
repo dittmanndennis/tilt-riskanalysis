@@ -7,6 +7,12 @@ graph = Graph(NEO4J['URI'])
 
 class Graph(object):
 
+    def setProperty(self, property, value):
+        graph.run("MATCH (n) WHERE NOT EXISTS (n." + property + ") SET n." + property + " = '" + str(value) + "'")
+
+    def updateProperty(self, property, value):
+        graph.run("MATCH (n) SET n." + property + " = '" + str(value) + "'")
+
     def distinctLouvainCluster(self):
         return graph.run("MATCH (n:Domain) RETURN DISTINCT n.louvain")
 
@@ -32,47 +38,61 @@ class Graph(object):
 
     def writeArticleRank(self):
         Graph().__createGraph("articleRankGraph", "REVERSE")
-        graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
+        try:
+            graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
+        except Exception as e:
+            print(e)
         Graph().__deleteGraph("articleRankGraph")
 
     def writeArticleRankCluster(self, cluster):
         Graph().__createLouvainGraph("articleRankGraph", cluster)
-        graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
+        try:
+            graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
+        except Exception as e:
+            print(e)
         Graph().__deleteGraph("articleRankGraph")
 
-    def writeEigenvector(self):
+    def __writeEigenvector(self):
         Graph().__createGraph("eigenvectorGraph", "REVERSE")
         graph.run("CALL gds.alpha.eigenvector.write('eigenvectorGraph', {writeProperty: 'eigenvector'})")
         Graph().__deleteGraph("eigenvectorGraph")
 
-    def writeEigenvectorCluster(self, cluster):
+    def __writeEigenvectorCluster(self, cluster):
         Graph().__createLouvainGraph("eigenvectorGraph", cluster)
         graph.run("CALL gds.alpha.eigenvector.write('eigenvectorGraph', {writeProperty: 'eigenvector'})")
         Graph().__deleteGraph("eigenvectorGraph")
 
     def writeBetweenness(self):
         Graph().__createGraph("betweennessGraph", "REVERSE")
-        graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
+        try:
+            graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
+        except Exception as e:
+            print(e)
         Graph().__deleteGraph("betweennessGraph")
 
     def writeBetweennessCluster(self, cluster):
         Graph().__createLouvainGraph("betweennessGraph", cluster)
-        graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
+        try:
+            graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
+        except Exception as e:
+            print(e)
         Graph().__deleteGraph("betweennessGraph")
 
     def writeDegree(self):
         Graph().__createGraph("degreeGraph", "REVERSE")
-        graph.run("CALL gds.degree.write('degreeGraph', { writeProperty: 'degree' })")
+        try:
+            graph.run("CALL gds.alpha.degree.write('degreeGraph', { writeProperty: 'degree' })")
+        except Exception as e:
+            print(e)
         Graph().__deleteGraph("degreeGraph")
 
     def writeDegreeCluster(self, cluster):
-        print("Here")
         Graph().__createLouvainGraph("degreeGraph", cluster)
-        print("Here")
-        graph.run("CALL gds.degree.write('degreeGraph', { writeProperty: 'degree' })")
-        print("Here")
+        try:
+            graph.run("CALL gds.alpha.degree.write('degreeGraph', { writeProperty: 'degree' })")
+        except Exception as e:
+            print(e)
         Graph().__deleteGraph("degreeGraph")
-        print("Here")
 
     # depreciated through writeHarmonicCloseness
     def __writeCloseness(self):
@@ -88,12 +108,18 @@ class Graph(object):
 
     def writeHarmonicCloseness(self):
         Graph().__createGraph("harmonicClosenessGraph", "REVERSE")
-        graph.run("CALL gds.alpha.closeness.harmonic.write('harmonicClosenessGraph', {writeProperty: 'harmonicCloseness'})")
+        try:
+            graph.run("CALL gds.alpha.closeness.harmonic.write('harmonicClosenessGraph', {writeProperty: 'harmonicCloseness'})")
+        except Exception as e:
+            print(e)
         Graph().__deleteGraph("harmonicClosenessGraph")
 
     def writeHarmonicClosenessCluster(self, cluster):
         Graph().__createLouvainGraph("harmonicClosenessGraph", cluster)
-        graph.run("CALL gds.alpha.closeness.harmonic.write('harmonicClosenessGraph', {writeProperty: 'harmonicCloseness'})")
+        try:
+            graph.run("CALL gds.alpha.closeness.harmonic.write('harmonicClosenessGraph', {writeProperty: 'harmonicCloseness'})")
+        except Exception as e:
+            print(e)
         Graph().__deleteGraph("harmonicClosenessGraph")
 
     def writeLouvain(self):

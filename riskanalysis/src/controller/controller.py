@@ -18,15 +18,14 @@ class Controller(object):
 
             Graph().writeArticleRank()
 
+        Graph.setProperty("harmonicCloseness", 0)
+
         Graph().writeLouvain()
         cluster = Graph().distinctLouvainCluster()
         for c in cluster:
             Graph().writeArticleRankCluster(c)
-            Graph().writeEigenvectorCluster(c)
             Graph().writeBetweennessCluster(c)
             Graph().writeDegreeCluster(c)
-            print("Here")
-            Graph().writeClosenessCluster(c)
-            print("Here")
+            Graph().writeHarmonicClosenessCluster(c)
 
         return { "RiskScore": properties }
