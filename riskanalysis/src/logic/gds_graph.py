@@ -7,11 +7,17 @@ graph = Graph(NEO4J['URI'])
 
 class Graph(object):
 
-    def setProperty(self, property, value):
+    def countNodesCluster(self, cluster):
+        return graph.run("MATCH (n {louvain: " + str(cluster) + "}) RETURN count(n) AS count").data()[0]["count"]
+
+    def setPropertyFirst(self, property, value):
         graph.run("MATCH (n) WHERE NOT EXISTS (n." + property + ") SET n." + property + " = '" + str(value) + "'")
 
-    def updateProperty(self, property, value):
+    def setProperty(self, property, value):
         graph.run("MATCH (n) SET n." + property + " = '" + str(value) + "'")
+
+    def setPropertyCluster(self, cluster, property, value):
+        graph.run("MATCH (n {louvain: " + str(cluster) + "}) SET n." + property + " = '" + str(value) + "'")
 
     def distinctLouvainCluster(self):
         return graph.run("MATCH (n:Domain) RETURN DISTINCT n.louvain")
@@ -41,7 +47,8 @@ class Graph(object):
         try:
             graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
         except Exception as e:
-            print(e)
+            Graph().setProperty("articleRank", 0)
+            #print(e)
         Graph().__deleteGraph("articleRankGraph")
 
     def writeArticleRankCluster(self, cluster):
@@ -49,7 +56,8 @@ class Graph(object):
         try:
             graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
         except Exception as e:
-            print(e)
+            Graph().setPropertyCluster(cluster, "articleRank", 0)
+            #print(e)
         Graph().__deleteGraph("articleRankGraph")
 
     def __writeEigenvector(self):
@@ -67,7 +75,8 @@ class Graph(object):
         try:
             graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
         except Exception as e:
-            print(e)
+            Graph().setProperty("betweenness", 0)
+            #print(e)
         Graph().__deleteGraph("betweennessGraph")
 
     def writeBetweennessCluster(self, cluster):
@@ -75,7 +84,8 @@ class Graph(object):
         try:
             graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
         except Exception as e:
-            print(e)
+            Graph().setPropertyCluster(cluster, "betweenness", 0)
+            #print(e)
         Graph().__deleteGraph("betweennessGraph")
 
     def writeDegree(self):
@@ -83,7 +93,8 @@ class Graph(object):
         try:
             graph.run("CALL gds.alpha.degree.write('degreeGraph', { writeProperty: 'degree' })")
         except Exception as e:
-            print(e)
+            Graph().setProperty("degree", 0)
+            #print(e)
         Graph().__deleteGraph("degreeGraph")
 
     def writeDegreeCluster(self, cluster):
@@ -91,7 +102,8 @@ class Graph(object):
         try:
             graph.run("CALL gds.alpha.degree.write('degreeGraph', { writeProperty: 'degree' })")
         except Exception as e:
-            print(e)
+            Graph().setPropertyCluster(cluster, "degree", 0)
+            #print(e)
         Graph().__deleteGraph("degreeGraph")
 
     # depreciated through writeHarmonicCloseness
@@ -111,7 +123,8 @@ class Graph(object):
         try:
             graph.run("CALL gds.alpha.closeness.harmonic.write('harmonicClosenessGraph', {writeProperty: 'harmonicCloseness'})")
         except Exception as e:
-            print(e)
+            Graph().setProperty("harmonicCloseness", 0)
+            #print(e)
         Graph().__deleteGraph("harmonicClosenessGraph")
 
     def writeHarmonicClosenessCluster(self, cluster):
@@ -119,7 +132,8 @@ class Graph(object):
         try:
             graph.run("CALL gds.alpha.closeness.harmonic.write('harmonicClosenessGraph', {writeProperty: 'harmonicCloseness'})")
         except Exception as e:
-            print(e)
+            Graph().setPropertyCluster(cluster, "harmonicCloseness", 0)
+            #print(e)
         Graph().__deleteGraph("harmonicClosenessGraph")
 
     def writeLouvain(self):
@@ -153,7 +167,35 @@ class Graph(object):
         Graph().__deleteGraph("nodeSimilarityGraph")
 
     def writePearsonSimilarity(self):
-        graph.run("MATCH (n) WITH {item:id(n), weights: [n.articleRank, n.eigenvector, n.betweenness, n.degree, n.closeness]} AS userData WITH collect(userData) as data CALL gds.alpha.similarity.pearson.write({data: data, topK: 1, similarityCutoff: 0.1}) YIELD nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, stdDev, p25, p50, p75, p90, p95, p99, p999, p100 RETURN nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, p95")
+        graph.run("MATCH (n) WITH {item: id(n), weights: [n.articleRank, n.betweenness, n.degree, n.harmonicCloseness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.pearson.write({data: data, topK: 0, similarityCutoff: 0.1}) YIELD nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, stdDev, p25, p50, p75, p90, p95, p99, p999, p100 RETURN nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, p95")
+
+    def euclideanSimilarityCluster(self, cluster):
+        try:
+            articleRankSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.articleRank]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg") #YIELD item1, item2, similarity RETURN gds.util.asNode(item1).domain AS from, gds.util.asNode(item2).domain AS to, similarity ORDER BY similarity DESC")
+            print(articleRankSimilarity.data())
+        except Exception as e:
+            print(e)
+        
+        try:
+            betweennessSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.betweenness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg")
+            print(betweennessSimilarity.data())
+        except Exception as e:
+            print(e)
+        
+        try:
+            degreeSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.degree]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg")
+            print(degreeSimilarity.data())
+        except Exception as e:
+            print(e)
+        
+        try:
+            harmonicClosenessSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.harmonicCloseness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg")
+            print(harmonicClosenessSimilarity.data())
+        except Exception as e:
+            print(e)
+
+    def writePearsonSimilarityBreached(self):
+        graph.run("MATCH (n) WHERE n.numberOfBreaches>0 WITH {item: id(n), weights: [n.articleRank, n.betweenness, n.degree, n.harmonicCloseness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.pearson.write({data: data, topK: 0, similarityCutoff: 0.1}) YIELD nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, stdDev, p25, p50, p75, p90, p95, p99, p999, p100 RETURN nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, p95")
 
     def trainNodeClassification(self):
         graph.run()

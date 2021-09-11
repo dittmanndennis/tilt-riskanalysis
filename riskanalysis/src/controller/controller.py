@@ -18,11 +18,11 @@ class Controller(object):
 
             Graph().writeArticleRank()
 
-        Graph.setProperty("harmonicCloseness", 0)
-
         Graph().writeLouvain()
         cluster = Graph().distinctLouvainCluster()
         for c in cluster:
+            if Graph().countNodesCluster(c) > 1:
+                Graph().euclideanSimilarityCluster(c)
             Graph().writeArticleRankCluster(c)
             Graph().writeBetweennessCluster(c)
             Graph().writeDegreeCluster(c)
