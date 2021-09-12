@@ -169,6 +169,91 @@ class Graph(object):
     def writePearsonSimilarity(self):
         graph.run("MATCH (n) WITH {item: id(n), weights: [n.articleRank, n.betweenness, n.degree, n.harmonicCloseness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.pearson.write({data: data, topK: 0, similarityCutoff: 0.1}) YIELD nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, stdDev, p25, p50, p75, p90, p95, p99, p999, p100 RETURN nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, p95")
 
+    def pearsonSimilarityMeasures(self, cluster):
+        item = graph.run("MATCH (n {louvain: " + str(cluster) + "}) RETURN id(n) AS item LIMIT 1")
+        try:
+            articleBetweenness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.betweenness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+        except Exception as e:
+            print(e)
+        try:
+            articleDegree = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.degree)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+        except Exception as e:
+            print(e)
+        try:
+            articleCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+        except Exception as e:
+            print(e)
+        try:
+            betweennessDegree = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.betweenness)}, {item: " + str(item["item"]) + ", weights: collect(n.degree)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+        except Exception as e:
+            print(e)
+        try:
+            betweennessCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.betweenness)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+        except Exception as e:
+            print(e)
+        try:
+            degreeCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.degree)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+        except Exception as e:
+            print(e)
+
+        try:
+            measures = [articleBetweenness < 0.8 and articleDegree < 0,8 and articleCloseness < 0.8]
+            measures.append(articleBetweenness < 0.8 and betweennessDegree < 0.8 and betweennessCloseness < 0.8)
+            measures.append(articleDegree < 0.8 and betweennessDegree < 0.8 and degreeCloseness < 0.8)
+            measures.append(articleCloseness < 0.8 and betweennessCloseness < 0.8 and betweennessCloseness < 0.8)
+            return measures
+        except Exception as e:
+            print(e)
+            return [False, False, False, False]
+
+    def pearsonSimilarityNodes(self, node, breachedNode, comparedSimilarity):
+            if comparedSimilarity[0] and comparedSimilarity[1] and comparedSimilarity[2] and comparedSimilarity[3]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.articleRank, n.betweenness, n.degree, n.harmonicCloseness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+
+            elif comparedSimilarity[0] and comparedSimilarity[1] and comparedSimilarity[2]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.articleRank, n.betweenness, n.degree]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[0] and comparedSimilarity[1] and comparedSimilarity[3]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.articleRank, n.betweenness, n.harmonicCloseness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[0] and comparedSimilarity[2] and comparedSimilarity[3]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.articleRank, n.degree, n.harmonicCloseness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[1] and comparedSimilarity[2] and comparedSimilarity[3]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.betweenness, n.degree, n.harmonicCloseness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[0] and comparedSimilarity[1]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.articleRank, n.betweenness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[0] and comparedSimilarity[2]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.articleRank, n.degree]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[0] and comparedSimilarity[3]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.articleRank, n.harmonicCloseness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[1] and comparedSimilarity[2]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.betweenness, n.degree]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[1] and comparedSimilarity[3]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.betweenness, n.harmonicCloseness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[2] and comparedSimilarity[3]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.degree, n.harmonicCloseness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[0]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.articleRank]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[1]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.betweenness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[2]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.degree]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+                
+            elif comparedSimilarity[3]:
+                return graph.run("MATCH (n) WHERE n.domain = '" + str(node) + "' n.domain = '" + str(breachedNode) + "' WITH {item: id(n), weights: [n.harmonicCloseness]} AS dataMeasures WITH collect(dataMeasures) AS data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC")
+            
+            return None
+
     def euclideanSimilarityCluster(self, cluster):
         try:
             articleRankSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.articleRank]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg") #YIELD item1, item2, similarity RETURN gds.util.asNode(item1).domain AS from, gds.util.asNode(item2).domain AS to, similarity ORDER BY similarity DESC")
@@ -194,7 +279,84 @@ class Graph(object):
         except Exception as e:
             print(e)
 
-    def writePearsonSimilarityBreached(self):
+    def comparePearsonSimilarityBreached(self, domain):
+        similarity = []
+
+        cluster = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN n.cluster AS cluster")
+        similarityDomain = Graph().pearsonSimilarityMeasures(cluster["cluster"])
+
+        breachedCluster = graph.run("MATCH (n) WHERE n.numberOfBreaches>0 RETURN n.cluster AS cluster")
+        for c in breachedCluster:
+            similarityBreach = Graph().pearsonSimilarityMeasures(c["cluster"])
+            comparedSimilarity = [similarityDomain[0] and similarityBreach[0]]
+            comparedSimilarity.append(similarityDomain[1] and similarityBreach[1])
+            comparedSimilarity.append(similarityDomain[2] and similarityBreach[2])
+            comparedSimilarity.append(similarityDomain[3] and similarityBreach[3])
+
+            if comparedSimilarity[0] and comparedSimilarity[1] and comparedSimilarity[2] and comparedSimilarity[3]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.articleRank, n.betweenness, n.degree, n.harmonicCloseness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.articleRank, n.betweenness, n.degree, n.harmonicCloseness]} AS measures")
+
+            elif comparedSimilarity[0] and comparedSimilarity[1] and comparedSimilarity[2]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.articleRank, n.betweenness, n.degree]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.articleRank, n.betweenness, n.degree]} AS measures")
+
+            elif comparedSimilarity[0] and comparedSimilarity[1] and comparedSimilarity[3]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.articleRank, n.betweenness, n.harmonicCloseness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.articleRank, n.betweenness, n.harmonicCloseness]} AS measures")
+
+            elif comparedSimilarity[0] and comparedSimilarity[2] and comparedSimilarity[3]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.articleRank, n.degree, n.harmonicCloseness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.articleRank, n.degree, n.harmonicCloseness]} AS measures")
+
+            elif comparedSimilarity[1] and comparedSimilarity[2] and comparedSimilarity[3]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.betweenness, n.degree, n.harmonicCloseness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.betweenness, n.degree, n.harmonicCloseness]} AS measures")
+
+            elif comparedSimilarity[0] and comparedSimilarity[1]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.articleRank, n.betweenness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.articleRank, n.betweenness]} AS measures")
+
+            elif comparedSimilarity[0] and comparedSimilarity[2]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.articleRank, n.degree]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.articleRank, n.degree]} AS measures")
+
+            elif comparedSimilarity[0] and comparedSimilarity[3]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.articleRank, n.harmonicCloseness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.articleRank, n.harmonicCloseness]} AS measures")
+
+            elif comparedSimilarity[1] and comparedSimilarity[2]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.betweenness, n.degree]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.betweenness, n.degree]} AS measures")
+
+            elif comparedSimilarity[1] and comparedSimilarity[3]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.betweenness, n.harmonicCloseness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.betweenness, n.harmonicCloseness]} AS measures")
+
+            elif comparedSimilarity[2] and comparedSimilarity[3]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.degree, n.harmonicCloseness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.degree, n.harmonicCloseness]} AS measures")
+
+            elif comparedSimilarity[0]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.articleRank]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.articleRank]} AS measures")
+
+            elif comparedSimilarity[1]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.betweenness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.betweenness]} AS measures")
+
+            elif comparedSimilarity[2]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.degree]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.degree]} AS measures")
+
+            elif comparedSimilarity[3]:
+                measures = graph.run("MATCH (n {domain: '" + str(domain) + "'}) RETURN {item: id(n), weights: [n.harmonicCloseness]} AS measures")
+                breachedMeasures = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN {item: id(n), weights: [n.harmonicCloseness]} AS measures")
+            else:
+                continue
+
+            similarity.append()
+
         graph.run("MATCH (n) WHERE n.numberOfBreaches>0 WITH {item: id(n), weights: [n.articleRank, n.betweenness, n.degree, n.harmonicCloseness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.pearson.write({data: data, topK: 0, similarityCutoff: 0.1}) YIELD nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, stdDev, p25, p50, p75, p90, p95, p99, p999, p100 RETURN nodes, similarityPairs, writeRelationshipType, writeProperty, min, max, mean, p95")
 
     def trainNodeClassification(self):
