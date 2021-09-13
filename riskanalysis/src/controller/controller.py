@@ -16,7 +16,23 @@ class Controller(object):
             #print(properties)
             sharing.createSharingNetwork(properties, connections)
 
-            Graph().writeArticleRank()
+        Graph().writeLouvain()
+        cluster = Graph().distinctLouvainCluster()
+        for c in cluster:
+            Graph().writeArticleRankCluster(c)
+            Graph().writeBetweennessCluster(c)
+            Graph().writeDegreeCluster(c)
+            Graph().writeHarmonicClosenessCluster(c)
 
-        Graph().writeLocalClusteringCoefficient()
-        return { "RiskScore": properties }
+        similarities = Graph().comparePearsonSimilarityBreached(domain)
+        print(similarities)
+
+        avgSimilarity = 0        
+        for sim in similarities:
+            avgSimilarity += (sim["similarity"]+1)
+        avgSimilarity /= len(similarities)
+        avgSimilarity /= 2
+
+        print(avgSimilarity)
+
+        return { "RiskScore": avgSimilarity }

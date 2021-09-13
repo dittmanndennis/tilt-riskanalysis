@@ -137,6 +137,17 @@ class FindTILTs(object):
                                 visitedTILTs.append(recipient["domain"])
                     
                     properties.append([domain, country, numberOfBreaches, severityOfBreaches, dataTypes, marketCapitalization, industrialSector])
+                
+                else:
+                    dataTypes = []
+                    country = nextTILT["controller"]["country"]
+                    breaches = this.getBreaches(domain)
+                    numberOfBreaches = breaches[0]
+                    severityOfBreaches = breaches[1]
+                    marketCapitalization = 0
+                    industrialSector = ""
+                    
+                    properties.append([domain, country, numberOfBreaches, severityOfBreaches, dataTypes, marketCapitalization, industrialSector])
             
             prevTILTs.clear()
             prevTILTs = nextTILTs.copy()
