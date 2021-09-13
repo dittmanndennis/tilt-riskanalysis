@@ -28,4 +28,6 @@ class Controller(object):
             Graph().writeDegreeCluster(c)
             Graph().writeHarmonicClosenessCluster(c)
 
+        Graph().comparePearsonSimilarityBreached(domain)
+
         return { "RiskScore": properties }
