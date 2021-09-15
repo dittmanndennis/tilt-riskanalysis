@@ -12,6 +12,17 @@ from .json_encoder import *
 
 class TILTResource:
 
+    async def on_get(self, req, resp):
+        try:
+            Controller().update()
+            doc = { "SUCCESS": "Database was updated!"}
+        except Exception as e:
+            doc = { "ERROR": e }
+            #doc = JSONEncoder().encode(doc)
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_404
+
+
     async def on_get(self, req, resp, domain):
         try:
             if val.domain(domain):
@@ -32,6 +43,5 @@ class TILTResource:
                 resp.status = falcon.HTTP_404
         except Exception as e:
             doc = { "ERROR": e }
-            #doc = JSONEncoder().encode(doc)
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_404
