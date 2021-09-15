@@ -199,6 +199,8 @@ class Graph(object):
         except Exception as e:
             print(e)
 
+        print()
+
         try:
             if articleBetweenness["similarity"] >= 0.8 and measures[0] and measures[1]:
                 if (articleDegree["similarity"]+1) + (articleCloseness["similarity"]+1) < (betweennessDegree["similarity"]+1) + (betweennessCloseness["similarity"]+1):
@@ -238,7 +240,7 @@ class Graph(object):
             return measures
         except Exception as e:
             print(e)
-            return [False, False, False, False]
+            return [False, False, True, False]
 
     def pearsonSimilarityNodes(self, node, breachedNode, comparedSimilarity):
             if comparedSimilarity[0] and comparedSimilarity[1] and comparedSimilarity[2] and comparedSimilarity[3]:
@@ -335,7 +337,7 @@ class Graph(object):
         similarityDomain = Graph().pearsonSimilarityMeasures(cluster["cluster"], validMeasures)
         #print(similarityDomain)
 
-        breachedCluster = graph.run("MATCH (n) WHERE n.numberOfBreaches>0 RETURN n.louvain AS cluster").data()
+        breachedCluster = graph.run("MATCH (n) WHERE n.numberOfBreaches>0 RETURN DISTINCT n.louvain AS cluster").data()
         for c in breachedCluster:
             validBreachedMeasures = Graph().euclideanSimilarityCluster(c["cluster"])
 
@@ -353,6 +355,58 @@ class Graph(object):
             similarity.append(sim)
 
         return similarity
+
+    def similarityProbability(self, domain):
+        similarity = []
+
+        domainCluster = graph.run("MATCH (n) WHERE n.domain = '" + str(domain) + "' RETURN n.louvain AS cluster").data()[0]
+        validDomainMeasures = Graph().euclideanSimilarityCluster(domainCluster["cluster"])
+        similarityDomain = Graph().pearsonSimilarityMeasures(domainCluster["cluster"], validDomainMeasures)
+        #print(similarityDomain)
+
+        cluster = graph.run("MATCH (n) RETURN DISTINCT n.louvain AS cluster").data()
+        for c in cluster:
+            validMeasures = Graph().euclideanSimilarityCluster(c["cluster"])
+
+            similarityCluster = Graph().pearsonSimilarityMeasures(c["cluster"], validMeasures)
+            comparedSimilarity = [similarityDomain[0] and similarityCluster[0]]
+            comparedSimilarity.append(similarityDomain[1] and similarityCluster[1])
+            comparedSimilarity.append(similarityDomain[2] and similarityCluster[2])
+            comparedSimilarity.append(similarityDomain[3] and similarityCluster[3])
+
+            #print(comparedSimilarity)
+
+            bestEntry = 0.9
+            bestNodes = []
+            clusterNodes = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) RETURN n.domain AS domain, n.numberOfBreaches AS breaches, n.louvain AS cluster").data()
+            for n in clusterNodes:
+                if n["domain"] is not None and domain not in n["domain"]:
+                    sim = Graph().pearsonSimilarityNodes(domain, n["domain"], comparedSimilarity)
+                    if sim["similarity"] == 1.0:
+                        bestEntry = 1.0
+                        bestNodes.clear()
+                        similarity.append(n)
+                    elif sim["similarity"] > bestEntry:
+                        bestEntry = sim
+                        bestNodes.clear()
+                        bestNodes.append(n)
+                    elif sim["similarity"] == bestEntry:
+                        bestNodes.append(n)
+            
+            if bestEntry < 1.0:
+                similarity.extend(bestNodes)
+        
+        if len(similarity) == 0:
+            return graph.run("MATCH (n) WHERE n.numberOfBreaches > 0  MATCH (m) RETURN toFloat(count(DISTINCT n)) / toFloat(count(DISTINCT m)) AS riskScore").data()[0]["riskScore"]
+
+        breachedNodes = []
+        for n in similarity:
+            if n["breaches"] > 0:
+                breachedNodes.append(n)
+
+        print(similarity)
+        
+        return len(breachedNodes) / (len(similarity))
 
     def trainNodeClassification(self):
         graph.run()
