@@ -24,17 +24,6 @@ class Controller(object):
             Graph().writeDegreeCluster(c)
             Graph().writeHarmonicClosenessCluster(c)
 
-        similarities = Graph().comparePearsonSimilarityBreached(domain)
-        #print(similarities)
-
-        avgSimilarity = 0        
-        for sim in similarities:
-            avgSimilarity += (sim["similarity"]+1)
-        avgSimilarity /= len(similarities)
-        avgSimilarity /= 2
-
-        #print(avgSimilarity)
-
         avgSimilarity = Graph().similarityProbability(domain)
 
         return { "RiskScore": avgSimilarity }
