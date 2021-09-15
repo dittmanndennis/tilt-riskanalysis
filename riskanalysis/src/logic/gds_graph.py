@@ -175,70 +175,74 @@ class Graph(object):
 
         item = graph.run("MATCH (n {louvain: " + str(cluster) + "}) RETURN id(n) AS item LIMIT 1").data()[0]
         try:
-            articleBetweenness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.betweenness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]
+            articleBetweenness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.betweenness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            print(e)
+            #print(e)
+            articleBetweenness = 1.0
         try:
-            articleDegree = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.degree)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]
+            articleDegree = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.degree)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            print(e)
+            #print(e)
+            articleDegree = 1.0
         try:
-            articleCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]
+            articleCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            print(e)
+            #print(e)
+            articleCloseness = 1.0
         try:
-            betweennessDegree = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.betweenness)}, {item: " + str(item["item"]) + ", weights: collect(n.degree)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]
+            betweennessDegree = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.betweenness)}, {item: " + str(item["item"]) + ", weights: collect(n.degree)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            print(e)
+            #print(e)
+            betweennessDegree = 1.0
         try:
-            betweennessCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.betweenness)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]
+            betweennessCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.betweenness)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            print(e)
+            #print(e)
+            betweennessCloseness = 1.0
         try:
-            degreeCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.degree)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]
+            degreeCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.degree)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            print(e)
+            #print(e)
+            degreeCloseness = 1.0
 
-        try:
-            if articleBetweenness["similarity"] >= 0.8 and measures[0] and measures[1]:
-                if (articleDegree["similarity"]+1) + (articleCloseness["similarity"]+1) < (betweennessDegree["similarity"]+1) + (betweennessCloseness["similarity"]+1):
-                    measures[1] = False
-                else:
-                    measures[0] = False
-            if articleDegree["similarity"] >= 0.8 and measures[0] and measures[2]:
-                if (articleBetweenness["similarity"]+1) + (articleCloseness["similarity"]+1) < (betweennessDegree["similarity"]+1) + (degreeCloseness["similarity"]+1):
-                    measures[2] = False
-                else:
-                    measures[0] = False
-            if articleCloseness["similarity"] >= 0.8 and measures[0] and measures[3]:
-                if (articleBetweenness["similarity"]+1) + (articleDegree["similarity"]+1) < (betweennessCloseness["similarity"]+1) + (degreeCloseness["similarity"]+1):
-                    measures[3] = False
-                else:
-                    measures[0] = False
-            if betweennessDegree["similarity"] >= 0.8 and measures[1] and measures[2]:
-                if (articleBetweenness["similarity"]+1) + (betweennessCloseness["similarity"]+1) < (articleDegree["similarity"]+1) + (degreeCloseness["similarity"]+1):
-                    measures[2] = False
-                else:
-                    measures[1] = False
-            if betweennessCloseness["similarity"] >= 0.8 and measures[1] and measures[3]:
-                if (articleBetweenness["similarity"]+1) + (betweennessDegree["similarity"]+1) < (articleCloseness["similarity"]+1) + (degreeCloseness["similarity"]+1):
-                    measures[2] = False
-                else:
-                    measures[1] = False
-            if degreeCloseness["similarity"] >= 0.8 and measures[2] and measures[3]:
-                if (articleDegree["similarity"]+1) + (betweennessDegree["similarity"]+1) < (articleCloseness["similarity"]+1) + (betweennessCloseness["similarity"]+1):
-                    measures[3] = False
-                else:
-                    measures[2] = False
-
-            #measures = [((articleBetweenness["similarity"] < 0.8 and articleDegree["similarity"] < 0,8) and articleCloseness["similarity"] < 0.8)]
-            #measures.append(((articleBetweenness["similarity"] < 0.8 and betweennessDegree["similarity"] < 0.8) and betweennessCloseness["similarity"] < 0.8))
-            #measures.append(((articleDegree["similarity"] < 0.8 and betweennessDegree["similarity"] < 0.8) and degreeCloseness["similarity"] < 0.8))
-            #measures.append(((articleCloseness["similarity"] < 0.8 and betweennessCloseness["similarity"] < 0.8) and betweennessCloseness["similarity"] < 0.8))
-            return measures
-        except Exception as e:
-            print(e)
-            return [False, False, False, False]
+        #Degree can always be calculated
+        if articleBetweenness == 1.0 and articleDegree == 1.0 and articleCloseness == 1.0 and betweennessDegree == 1.0 and betweennessCloseness == 1.0 and degreeCloseness == 1.0:
+            return [False, False, True, False]
+        
+        if measures[0] and measures[1] and articleBetweenness >= 0.8:
+            if (articleDegree + 1.0) + (articleCloseness + 1.0) < (betweennessDegree + 1.0) + (betweennessCloseness + 1.0):
+                measures[1] = False
+            else:
+                measures[0] = False
+        if measures[0] and measures[2] and articleDegree >= 0.8:
+            if (articleBetweenness + 1.0) + (articleCloseness + 1.0) < (betweennessDegree + 1.0) + (degreeCloseness + 1.0):
+                measures[2] = False
+            else:
+                measures[0] = False
+        if measures[0] and measures[3] and articleCloseness >= 0.8:
+            if (articleBetweenness + 1.0) + (articleDegree + 1.0) < (betweennessCloseness + 1.0) + (degreeCloseness + 1.0):
+                measures[3] = False
+            else:
+                measures[0] = False
+        if measures[1] and measures[2] and betweennessDegree >= 0.8:
+            if (articleBetweenness + 1.0) + (betweennessCloseness + 1.0) < (articleDegree + 1.0) + (degreeCloseness + 1.0):
+                measures[2] = False
+            else:
+                measures[1] = False
+        if measures[1] and measures[3] and betweennessCloseness >= 0.8:
+            if (articleBetweenness + 1.0) + (betweennessDegree + 1.0) < (articleCloseness + 1.0) + (degreeCloseness + 1.0):
+                measures[2] = False
+            else:
+                measures[1] = False
+        if measures[2] and measures[3] and degreeCloseness >= 0.8:
+            if (articleDegree + 1.0) + (betweennessDegree + 1.0) < (articleCloseness + 1.0) + (betweennessCloseness + 1.0):
+                measures[3] = False
+            else:
+                measures[2] = False
+        if measures[3] and articleCloseness == 1.0 and betweennessCloseness == 1.0 and degreeCloseness == 1.0:
+            measures[3] = False
+            
+        return measures
 
     def pearsonSimilarityNodes(self, node, breachedNode, comparedSimilarity):
             if comparedSimilarity[0] and comparedSimilarity[1] and comparedSimilarity[2] and comparedSimilarity[3]:
@@ -290,69 +294,98 @@ class Graph(object):
 
     def euclideanSimilarityCluster(self, cluster):
         try:
-            articleRankSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.articleRank]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0] #YIELD item1, item2, similarity RETURN gds.util.asNode(item1).domain AS from, gds.util.asNode(item2).domain AS to, similarity ORDER BY similarity DESC")
+            articleRankSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.articleRank]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]["similarityAvg"] #YIELD item1, item2, similarity RETURN gds.util.asNode(item1).domain AS from, gds.util.asNode(item2).domain AS to, similarity ORDER BY similarity DESC")
         except Exception as e:
-            print(e)
+            #print(e)
+            articleRankSimilarity = 0.0
         
         try:
-            betweennessSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.betweenness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]
+            betweennessSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.betweenness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]["similarityAvg"]
         except Exception as e:
-            print(e)
+            #print(e)
+            betweennessSimilarity = 0.0
         
         try:
-            degreeSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.degree]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]
+            degreeSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.degree]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]["similarityAvg"]
+            if degreeSimilarity is None:
+                degreeSimilarity = 0.0
         except Exception as e:
-            print(e)
+            #print(e)
+            degreeSimilarity = 0.0
         
         try:
-            harmonicClosenessSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.harmonicCloseness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]
+            harmonicClosenessSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.harmonicCloseness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]["similarityAvg"]
         except Exception as e:
-            print(e)
+            #print(e)
+            harmonicClosenessSimilarity = 0.0
 
         # Article, Betweenness, Degree, Closeness
         measures = [True, True, True, True]
 
-        try:
-            if articleRankSimilarity["similarityAvg"] < 0.1:
-                measures[0] = False
-            if betweennessSimilarity["similarityAvg"] < 0.1:
-                measures[1] = False
-            if degreeSimilarity["similarityAvg"] < 0.1:
-                measures[2] = False
-            if harmonicClosenessSimilarity["similarityAvg"] < 0.1:
-                measures[3] = False
+        if articleRankSimilarity < 0.1:
+            measures[0] = False
+        if betweennessSimilarity < 0.1:
+            measures[1] = False
+        if degreeSimilarity < 0.1:
+            measures[2] = False
+        if harmonicClosenessSimilarity < 0.1:
+            measures[3] = False
+            
+        return measures
 
-            return measures
-        except Exception as e:
-            return measures
-
-
-    def comparePearsonSimilarityBreached(self, domain):
+    def similarityProbability(self, domain):
         similarity = []
 
-        cluster = graph.run("MATCH (n) WHERE n.domain = '" + str(domain) + "' RETURN n.louvain AS cluster").data()[0]
-        validMeasures = Graph().euclideanSimilarityCluster(cluster["cluster"])
-        similarityDomain = Graph().pearsonSimilarityMeasures(cluster["cluster"], validMeasures)
+        domainCluster = graph.run("MATCH (n) WHERE n.domain = '" + str(domain) + "' RETURN n.louvain AS cluster").data()[0]["cluster"]
+
+        validDomainMeasures = Graph().euclideanSimilarityCluster(domainCluster)
+        similarityDomain = Graph().pearsonSimilarityMeasures(domainCluster, validDomainMeasures)
         #print(similarityDomain)
 
-        breachedCluster = graph.run("MATCH (n) WHERE n.numberOfBreaches>0 RETURN n.louvain AS cluster").data()
-        for c in breachedCluster:
-            validBreachedMeasures = Graph().euclideanSimilarityCluster(c["cluster"])
+        cluster = graph.run("MATCH (n) RETURN DISTINCT n.louvain AS cluster").data()
+        for c in cluster:
+            validMeasures = Graph().euclideanSimilarityCluster(c["cluster"])
+            similarityCluster = Graph().pearsonSimilarityMeasures(c["cluster"], validMeasures)
 
-            similarityBreach = Graph().pearsonSimilarityMeasures(c["cluster"], validBreachedMeasures)
-            comparedSimilarity = [similarityDomain[0] and similarityBreach[0]]
-            comparedSimilarity.append(similarityDomain[1] and similarityBreach[1])
-            comparedSimilarity.append(similarityDomain[2] and similarityBreach[2])
-            comparedSimilarity.append(similarityDomain[3] and similarityBreach[3])
-
+            comparedSimilarity = [similarityDomain[0] and similarityCluster[0]]
+            comparedSimilarity.append(similarityDomain[1] and similarityCluster[1])
+            comparedSimilarity.append(similarityDomain[2] and similarityCluster[2])
+            comparedSimilarity.append(similarityDomain[3] and similarityCluster[3])
             #print(comparedSimilarity)
 
-            breachedNode = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) WHERE n.numberOfBreaches>0 RETURN n.domain as domain").data()[0]
-            sim = Graph().pearsonSimilarityNodes(domain, breachedNode["domain"], comparedSimilarity)
+            bestEntry = 0.9
+            if c["cluster"] == domainCluster:
+                bestEntry = 1.0
+            bestNodes = []
+            clusterNodes = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) RETURN n.domain AS domain, n.numberOfBreaches AS breaches, n.louvain AS cluster").data()
+            for n in clusterNodes:
+                if n["domain"] is not None and domain not in n["domain"]:
+                    sim = Graph().pearsonSimilarityNodes(domain, n["domain"], comparedSimilarity)
+                    if sim["similarity"] == 1.0:
+                        bestEntry = 1.0
+                        bestNodes.clear()
+                        similarity.append(n)
+                    elif sim["similarity"] > bestEntry:
+                        bestEntry = sim
+                        bestNodes.clear()
+                        bestNodes.append(n)
+                    elif sim["similarity"] == bestEntry:
+                        bestNodes.append(n)
+            
+            if bestEntry < 1.0:
+                similarity.extend(bestNodes)
+        
+        if len(similarity) == 0:
+            return graph.run("MATCH (n) WHERE n.numberOfBreaches > 0  MATCH (m) RETURN toFloat(count(DISTINCT n)) / toFloat(count(DISTINCT m)) AS riskScore").data()[0]["riskScore"]
 
-            similarity.append(sim)
+        breachedNodes = []
+        for n in similarity:
+            if n["breaches"] > 0:
+                breachedNodes.append(n)
 
-        return similarity
+        print(similarity)
+        
+        return len(breachedNodes) / (len(similarity))
 
     def trainNodeClassification(self):
         graph.run()
