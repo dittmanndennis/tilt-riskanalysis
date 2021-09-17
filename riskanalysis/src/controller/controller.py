@@ -36,6 +36,4 @@ class Controller(object):
             #print(properties)
             sharing.createSharingNetwork(properties, connections)
 
-        avgSimilarity = Graph().similarityProbability(domain)
-
-        return { "RiskScore": avgSimilarity }
+        return Graph().similarityProbability(domain)
