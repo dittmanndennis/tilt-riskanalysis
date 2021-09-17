@@ -334,7 +334,7 @@ class Graph(object):
         return measures
 
     def similarityProbability(self, domain):
-        similarity = []
+        similarity = [graph.run("MATCH (n) WHERE n.domain = '" + str(domain) + "' RETURN n.domain AS domain, n.numberOfBreaches AS breaches, n.louvain AS cluster, n.severityOfBreaches AS severity, n.articleRank AS articleRank, n.betweenness AS betweenness, n.degree AS degree, n.harmonicCloseness as harmonicCloseness").data()[0]]
         validMeasuresInCluster = []
 
         domainCluster = graph.run("MATCH (n) WHERE n.domain = '" + str(domain) + "' RETURN n.louvain AS cluster").data()[0]["cluster"]
