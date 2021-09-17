@@ -16,5 +16,6 @@ app = falcon.asgi.App()
 
 # 
 res = TILTResource()
-app.add_route('/update', res)
-app.add_route('/{domain}', res)
+app.add_route('/update', res, suffix='update')
+app.add_route('/update/{domain}', res, suffix='updateDomain')
+app.add_route('/{domain}', res, suffix='domain')

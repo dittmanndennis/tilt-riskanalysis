@@ -392,13 +392,11 @@ class Graph(object):
 
         avgSeverity /= numberOfBreaches
         
-        return { 
-                 "RiskScore": len(breachedNodes) / len(similarity),
+        return { "RiskScore": len(breachedNodes) / len(similarity),
                  "avgSeverityOfBreaches": avgSeverity,
                  "similarBreachedDomains": breachedNodes,
                  "similarNodes": similarity,
-                 "validMeasuresInCluster": validMeasuresInCluster
-               }
+                 "validMeasuresInCluster": validMeasuresInCluster }
 
     def trainNodeClassification(self):
         graph.run()
