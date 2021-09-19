@@ -34,6 +34,18 @@ class TILTResource:
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_404
 
+    async def on_get_calculate(self, req, resp):
+        try:
+            Controller().calculateMeasures()
+            doc = { "SUCCESS": "Measures were calculated!"}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_200
+        except Exception as e:
+            doc = { "ERROR": e }
+            #doc = JSONEncoder().encode(doc)
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_404
+
     async def on_get_domain(self, req, resp, domain):
         try:
             if val.domain(domain):

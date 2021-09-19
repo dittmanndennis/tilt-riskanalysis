@@ -20,7 +20,7 @@ class Graph(object):
         graph.run("MATCH (n {louvain: " + str(cluster) + "}) SET n." + property + " = '" + str(value) + "'")
 
     def distinctLouvainCluster(self):
-        return graph.run("MATCH (n:Domain) RETURN DISTINCT n.louvain")
+        return graph.run("MATCH (n:Domain) RETURN DISTINCT n.louvain AS cluster").data()
 
     def breachedDomains(self):
         return graph.run("MATCH (n) WHERE n.numberOfBreaches>0 RETURN id(n)")
@@ -34,7 +34,7 @@ class Graph(object):
         graph.run("CALL gds.graph.create('" + graph_name + "', 'Domain', {SENDS_DATA_TO: {orientation: '" + orientation + "'}})")
 
     def __createLouvainGraph(self, graph_name, cluster):
-        graph.run("CALL gds.graph.create.cypher('" + graph_name + "', 'MATCH (n:Domain {louvain: " + str(cluster) + "}) RETURN id(n) as id', 'MATCH (n {louvain: " + str(cluster) + "})-[rel:SENDS_DATA_TO]->(m) RETURN id(n) AS source, id(m) AS target')")
+        graph.run("CALL gds.graph.create.cypher('" + graph_name + "', 'MATCH (n:Domain {louvain: " + str(cluster) + "}) RETURN id(n) as id', 'MATCH (n {louvain: " + str(cluster) + "})-[rel:SENDS_DATA_TO]->(m) WHERE m.louvain = " + str(cluster) + " RETURN id(n) AS source, id(m) AS target')")
 
     # depreciated by writeArticleRank
     def __writePageRank(self):

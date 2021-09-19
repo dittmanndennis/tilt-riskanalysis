@@ -64,5 +64,14 @@ class Controller(object):
                 Graph().writeDegreeCluster(c)
                 Graph().writeHarmonicClosenessCluster(c)
 
+    def calculateMeasures(self):
+        Graph().writeLouvain()
+        cluster = Graph().distinctLouvainCluster()
+        for c in cluster:
+            Graph().writeArticleRankCluster(c["cluster"])
+            Graph().writeBetweennessCluster(c["cluster"])
+            Graph().writeDegreeCluster(c["cluster"])
+            Graph().writeHarmonicClosenessCluster(c["cluster"])
+
     def getRiskScore(self, domain):
         return Graph().similarityProbability(domain)
