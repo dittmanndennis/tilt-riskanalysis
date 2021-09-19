@@ -26,8 +26,21 @@ class TILTResource:
 
     async def on_get_updateDomain(self, req, resp, domain):
         try:
-            Controller().updateDomain(domain)
-            doc = { "SUCCESS": "Database was updated!"}
+            if val.domain(domain):
+                if Controller().updateDomain(domain):
+                    doc = { "ERROR": "TILT not found" }
+                    #doc = JSONEncoder().encode(doc)
+                    resp.text = json.dumps(doc, ensure_ascii=False)
+                    resp.status = falcon.HTTP_404
+                else:
+                    doc = { "SUCCESS": "Database was updated!"}
+                    resp.text = json.dumps(doc, ensure_ascii=False)
+                    resp.status = falcon.HTTP_200
+            else:
+                doc = { "ERROR": "TILT not found" }
+                #doc = JSONEncoder().encode(doc)
+                resp.text = json.dumps(doc, ensure_ascii=False)
+                resp.status = falcon.HTTP_404
         except Exception as e:
             doc = { "ERROR": e }
             #doc = JSONEncoder().encode(doc)

@@ -27,13 +27,7 @@ class Controller(object):
                     sharing.createRelationship([doc["meta"]["url"], recipient[0]])
 
         if changes:
-            Graph().writeLouvain()
-            cluster = Graph().distinctLouvainCluster()
-            for c in cluster:
-                Graph().writeArticleRankCluster(c)
-                Graph().writeBetweennessCluster(c)
-                Graph().writeDegreeCluster(c)
-                Graph().writeHarmonicClosenessCluster(c)
+            Controller().calculateMeasures()
 
     def updateDomain(self, domain):
         find = FindTILTs()
@@ -41,6 +35,8 @@ class Controller(object):
 
         changes = False
         doc = find.getTILT(domain)
+        if doc is None:
+            return True
 
         doc["meta"]["url"] = get_fld(doc["meta"]["url"])
         nodeData = find.nodeData(doc)
@@ -54,15 +50,10 @@ class Controller(object):
             if not sharing.existsRelationship([doc["meta"]["url"], recipient[0]]):
                 changes = True
                 sharing.createRelationship([doc["meta"]["url"], recipient[0]])
-
+        
         if changes:
-            Graph().writeLouvain()
-            cluster = Graph().distinctLouvainCluster()
-            for c in cluster:
-                Graph().writeArticleRankCluster(c)
-                Graph().writeBetweennessCluster(c)
-                Graph().writeDegreeCluster(c)
-                Graph().writeHarmonicClosenessCluster(c)
+            Controller().calculateMeasures()
+        return False
 
     def calculateMeasures(self):
         Graph().writeLouvain()
