@@ -16,6 +16,8 @@ class TILTResource:
         try:
             Controller().update()
             doc = { "SUCCESS": "Database was updated!"}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_200
         except Exception as e:
             doc = { "ERROR": e }
             #doc = JSONEncoder().encode(doc)
@@ -24,7 +26,7 @@ class TILTResource:
 
     async def on_get_updateDomain(self, req, resp, domain):
         try:
-            Controller().update()
+            Controller().updateDomain(domain)
             doc = { "SUCCESS": "Database was updated!"}
         except Exception as e:
             doc = { "ERROR": e }
