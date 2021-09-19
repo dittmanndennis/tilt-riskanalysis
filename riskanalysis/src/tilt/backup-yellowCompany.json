@@ -1,13 +1,14 @@
 {
+  "_id": { "$oid": "61093e77ced17c0007c5ee33" },
   "meta": {
     "_id": "f1424f86-ca0f-4f0c-9438-43cc00509931",
-    "name": "Green Company",
+    "name": "Yellow Company AG",
     "created": "2020-04-03T15:53:05.929588",
     "modified": "2020-04-03T15:53:05.929588",
     "version": 2,
     "language": "de",
     "status": "active",
-    "url": "https://green-bikes.de/privacy",
+    "url": "https://www.yellowcompany.de/privacy",
     "_hash": "be81d309088dde861ab5fc4d62d4bbfe0aeef3e3baf2f5362c1086f451f0a1e7"
   },
   "controller": {
@@ -56,29 +57,20 @@
       ],
       "recipients": [
         {
-          "name": "Yellow Company AG",
-          "domain": "yellowcompany.com",
-          "division": "Product line e-mobility",
-          "address": "Triana 123, 9999 Seville",
-          "country": "ES",
-          "representative": {
-            "name": "Jane Super",
-            "email": "contact@yellowcompany.de",
-            "phone": "0049 151 1234 9876"
-          },
-          "category": "Marketing content provider"
+          "name": "Alphabet Inc.",
+          "domain": "google.com",
+          "division": "Google Analytics",
+          "address": "Gordon House Barrow Street Dublin 4, D04E5W5 Ireland",
+          "country": "Ireland",
+          "representative": { "name": "", "email": "", "phone": "" },
+          "category": "Cookie"
         },
-        {
-          "category": "Responsible Statistical Institutes"
-        }
+        { "category": "Responsible Statistical Institutes" }
       ],
       "storage": [
         {
           "temporal": [
-            {
-              "description": "Creating backups.",
-              "ttl": "P3Y6M4DT12H30M5S"
-            },
+            { "description": "Creating backups.", "ttl": "P3Y6M4DT12H30M5S" },
             {
               "description": "Finishing ordering process.",
               "ttl": "2020-08-09T18:31:42P3Y6M4DT12H30M17S"
@@ -126,10 +118,7 @@
     "url": "https://green-bikes.de/access",
     "email": "access@greencompany.de",
     "identificationEvidences": ["ID card copy", "Email verification"],
-    "administrativeFee": {
-      "amount": 0,
-      "currency": "EUR"
-    },
+    "administrativeFee": { "amount": 0, "currency": "EUR" },
     "dataFormats": ["json", "xml"]
   },
   "sources": [

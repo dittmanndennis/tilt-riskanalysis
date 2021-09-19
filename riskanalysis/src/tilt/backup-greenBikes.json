@@ -1,4 +1,5 @@
 {
+  "_id": { "$oid": "6109266a492dda00078591b7" },
   "meta": {
     "_id": "f1424f86-ca0f-4f0c-9438-43cc00509931",
     "name": "Green Company",
@@ -57,7 +58,7 @@
       "recipients": [
         {
           "name": "Yellow Company AG",
-          "domain": "yellowcompany.com",
+          "domain": "yellowcompany.de",
           "division": "Product line e-mobility",
           "address": "Triana 123, 9999 Seville",
           "country": "ES",
@@ -69,16 +70,20 @@
           "category": "Marketing content provider"
         },
         {
-          "category": "Responsible Statistical Institutes"
-        }
+          "name": "Alphabet Inc.",
+          "domain": "google.com",
+          "division": "Google Analytics",
+          "address": "Gordon House Barrow Street Dublin 4, D04E5W5 Ireland",
+          "country": "Ireland",
+          "representative": { "name": "", "email": "", "phone": "" },
+          "category": "Cookie"
+        },
+        { "category": "Responsible Statistical Institutes" }
       ],
       "storage": [
         {
           "temporal": [
-            {
-              "description": "Creating backups.",
-              "ttl": "P3Y6M4DT12H30M5S"
-            },
+            { "description": "Creating backups.", "ttl": "P3Y6M4DT12H30M5S" },
             {
               "description": "Finishing ordering process.",
               "ttl": "2020-08-09T18:31:42P3Y6M4DT12H30M17S"
@@ -126,10 +131,7 @@
     "url": "https://green-bikes.de/access",
     "email": "access@greencompany.de",
     "identificationEvidences": ["ID card copy", "Email verification"],
-    "administrativeFee": {
-      "amount": 0,
-      "currency": "EUR"
-    },
+    "administrativeFee": { "amount": 0, "currency": "EUR" },
     "dataFormats": ["json", "xml"]
   },
   "sources": [

@@ -9,23 +9,23 @@ graph = Graph(NEO4J['URI'])
 class SharingNetworks(object):
 
     # returns the first matching node to the given domain
-    def getDomain(self, domain):
+    def getNode(self, domain):
         return graph.nodes.match("Domain", domain=domain).first()
 
-    def existsDomain(self, domain):
-        if(SharingNetworks().getDomain(domain) is None):
+    def existsNode(self, domain):
+        if(SharingNetworks().getNode(domain) is None):
             return False
         return True
 
     # returns the first matching relationship to the given connection
-    def getConnection(self, connection):
+    def getRelationship(self, relationship):
         this = SharingNetworks()
-        a = this.getDomain(connection[0])
-        b = this.getDomain(connection[1])
+        a = this.getNode(relationship[0])
+        b = this.getNode(relationship[1])
         return graph.relationships.match((a, b)).first()    #graph.relationships.match((a, b), "SEND_DATA_TO").first()
 
-    def existsConnection(self, connection):
-        if(SharingNetworks().getConnection(connection) is None):
+    def existsRelationship(self, relationship):
+        if(SharingNetworks().getRelationship(relationship) is None):
             return False
         return True
 
@@ -33,7 +33,7 @@ class SharingNetworks(object):
     # https://stackoverflow.com/questions/44237316/get-all-childs-of-a-particular-node-till-a-particular-depth
     # https://stackoverflow.com/questions/60701818/how-to-get-all-child-nodes-of-a-node
     def getChildNodes(self, parentDomain):
-        query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN d.domain'
+        query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN DISTINCT d.domain'
         nodes = graph.run(query).data()
 
         childNodes = []
@@ -74,11 +74,11 @@ class SharingNetworks(object):
 
         if(properties is not None and connections is not None):
             for property in properties:
-                if(not this.existsDomain(property[0])):
+                if(not this.existsNode(property[0])):
                     this.createNode(property)
 
             for connection in connections:
-                if(not this.existsConnection(connection)):
+                if(not this.existsRelationship(connection)):
                     this.createRelationship(connection)
 
     # creates a node in the default database of the Neo4j instance

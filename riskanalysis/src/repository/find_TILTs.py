@@ -1,6 +1,7 @@
 import pymongo as pymongo
 import re
 import requests as req
+from tld import get_fld
 
 from ..common.constants import *
 
@@ -199,3 +200,42 @@ class FindTILTs(object):
         except Exception as e:
             print(e)
             return None
+
+    def getTILT(self, domain):
+        try:
+            return tiltCollection.find_one( { "meta.url": re.compile("^" + domain + "$|^" + domain + "/|/" +
+            domain + "$|\." + domain + "$|/" + domain + "/|\." + domain + "/") },
+            { "_id": 0, "meta.url": 1, "controller.country": 1, "dataDisclosed.category": 1, "riskanalysis.marketCapitalization": 1, "riskanalysis.industrialSector": 1, "dataDisclosed.recipients.domain": 1 } )
+        except Exception as e:
+            print(e)
+            return None
+
+    def allTILTs(self):
+        try:
+            return tiltCollection.find( {}, { "_id": 0, "meta.url": 1, "controller.country": 1, "dataDisclosed.category": 1, "riskanalysis.marketCapitalization": 1, "riskanalysis.industrialSector": 1, "dataDisclosed.recipients.domain": 1 } )
+        except Exception as e:
+            print(e)
+            return None
+
+    def nodeData(self, doc):
+        breaches = FindTILTs().getBreaches(doc["meta"]["url"])
+        
+        categories = []
+        recipients = []
+        for category in doc["dataDisclosed"]:
+            if "category" in category and len(category["category"]) > 0 and category["category"].lower() not in categories:
+                categories.append(category["category"].lower())
+                for recipient in category["recipients"]:
+                    if "domain" in recipient and len(recipient["domain"]) > 0 and recipient["domain"].lower() not in recipients:
+                        recipientBreaches = FindTILTs().getBreaches(recipient["domain"])
+                        recipients.append([recipient["domain"].lower(), "", recipientBreaches[0], recipientBreaches[1], [], 0, ""])
+        
+        marketCapitalization = 0
+        industrialSector = ""
+        if "riskAnalysis" in doc:
+                        if "marketCapitalization" in doc["riskAnalysis"]:
+                            marketCapitalization = doc["riskAnalysis"]["marketCapitalization"]
+                        if "industrialSector" in doc["riskAnalysis"]:
+                            industrialSector = doc["riskAnalysis"]["industrialSector"]
+
+        return [[doc["meta"]["url"], doc["controller"]["country"], breaches[0], breaches[1], categories, marketCapitalization, industrialSector], recipients]

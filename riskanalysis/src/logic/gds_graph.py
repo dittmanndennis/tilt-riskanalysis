@@ -20,7 +20,7 @@ class Graph(object):
         graph.run("MATCH (n {louvain: " + str(cluster) + "}) SET n." + property + " = '" + str(value) + "'")
 
     def distinctLouvainCluster(self):
-        return graph.run("MATCH (n:Domain) RETURN DISTINCT n.louvain")
+        return graph.run("MATCH (n:Domain) RETURN DISTINCT n.louvain AS cluster").data()
 
     def breachedDomains(self):
         return graph.run("MATCH (n) WHERE n.numberOfBreaches>0 RETURN id(n)")
@@ -34,7 +34,7 @@ class Graph(object):
         graph.run("CALL gds.graph.create('" + graph_name + "', 'Domain', {SENDS_DATA_TO: {orientation: '" + orientation + "'}})")
 
     def __createLouvainGraph(self, graph_name, cluster):
-        graph.run("CALL gds.graph.create.cypher('" + graph_name + "', 'MATCH (n:Domain {louvain: " + str(cluster) + "}) RETURN id(n) as id', 'MATCH (n {louvain: " + str(cluster) + "})-[rel:SENDS_DATA_TO]->(m) RETURN id(n) AS source, id(m) AS target')")
+        graph.run("CALL gds.graph.create.cypher('" + graph_name + "', 'MATCH (n:Domain {louvain: " + str(cluster) + "}) RETURN id(n) as id', 'MATCH (n {louvain: " + str(cluster) + "})-[rel:SENDS_DATA_TO]->(m) WHERE m.louvain = " + str(cluster) + " RETURN id(n) AS source, id(m) AS target')")
 
     # depreciated by writeArticleRank
     def __writePageRank(self):
@@ -334,7 +334,8 @@ class Graph(object):
         return measures
 
     def similarityProbability(self, domain):
-        similarity = []
+        similarity = [graph.run("MATCH (n) WHERE n.domain = '" + str(domain) + "' RETURN n.domain AS domain, n.numberOfBreaches AS breaches, n.louvain AS cluster, n.severityOfBreaches AS severity, n.articleRank AS articleRank, n.betweenness AS betweenness, n.degree AS degree, n.harmonicCloseness as harmonicCloseness").data()[0]]
+        validMeasuresInCluster = []
 
         domainCluster = graph.run("MATCH (n) WHERE n.domain = '" + str(domain) + "' RETURN n.louvain AS cluster").data()[0]["cluster"]
 
@@ -346,6 +347,8 @@ class Graph(object):
         for c in cluster:
             validMeasures = Graph().euclideanSimilarityCluster(c["cluster"])
             similarityCluster = Graph().pearsonSimilarityMeasures(c["cluster"], validMeasures)
+            
+            validMeasuresInCluster.append({"cluster": c["cluster"], "articleRank": similarityCluster[0], "betweenness": similarityCluster[1], "degree": similarityCluster[2], "harmonicCloseness": similarityCluster[3]})
 
             comparedSimilarity = [similarityDomain[0] and similarityCluster[0]]
             comparedSimilarity.append(similarityDomain[1] and similarityCluster[1])
@@ -357,7 +360,7 @@ class Graph(object):
             if c["cluster"] == domainCluster:
                 bestEntry = 1.0
             bestNodes = []
-            clusterNodes = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) RETURN n.domain AS domain, n.numberOfBreaches AS breaches, n.louvain AS cluster").data()
+            clusterNodes = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) RETURN n.domain AS domain, n.numberOfBreaches AS breaches, n.louvain AS cluster, n.severityOfBreaches AS severity, n.articleRank AS articleRank, n.betweenness AS betweenness, n.degree AS degree, n.harmonicCloseness as harmonicCloseness").data()
             for n in clusterNodes:
                 if n["domain"] is not None and domain not in n["domain"]:
                     sim = Graph().pearsonSimilarityNodes(domain, n["domain"], comparedSimilarity)
@@ -379,13 +382,21 @@ class Graph(object):
             return graph.run("MATCH (n) WHERE n.numberOfBreaches > 0  MATCH (m) RETURN toFloat(count(DISTINCT n)) / toFloat(count(DISTINCT m)) AS riskScore").data()[0]["riskScore"]
 
         breachedNodes = []
+        avgSeverity = 0
+        numberOfBreaches = 0
         for n in similarity:
             if n["breaches"] > 0:
                 breachedNodes.append(n)
+                avgSeverity += n["severity"]
+                numberOfBreaches += n["breaches"]
 
-        print(similarity)
+        avgSeverity /= numberOfBreaches
         
-        return len(breachedNodes) / (len(similarity))
+        return { "RiskScore": len(breachedNodes) / len(similarity),
+                 "avgSeverityOfBreaches": avgSeverity,
+                 "similarBreachedDomains": breachedNodes,
+                 "similarNodes": similarity,
+                 "validMeasuresInCluster": validMeasuresInCluster }
 
     def trainNodeClassification(self):
         graph.run()
