@@ -1,7 +1,10 @@
 uvicorn
 falcon
+json
 pymongo
+regex
 py2neo
 requests
 validators
+tld
 falcon-swagger-ui

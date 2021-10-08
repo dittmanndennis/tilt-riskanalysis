@@ -14,10 +14,10 @@ class TILTResource:
 
     async def on_get_update(self, req, resp):
         try:
-            Controller().update()
             doc = { "SUCCESS": "Database was updated!"}
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_200
+            Controller.update()
         except Exception as e:
             doc = { "ERROR": e }
             #doc = JSONEncoder().encode(doc)
@@ -27,7 +27,7 @@ class TILTResource:
     async def on_get_updateDomain(self, req, resp, domain):
         try:
             if val.domain(domain):
-                if Controller().updateDomain(domain):
+                if Controller.updateDomain(domain):
                     doc = { "ERROR": "TILT not found" }
                     #doc = JSONEncoder().encode(doc)
                     resp.text = json.dumps(doc, ensure_ascii=False)
@@ -49,10 +49,10 @@ class TILTResource:
 
     async def on_get_calculate(self, req, resp):
         try:
-            Controller().calculateMeasures()
             doc = { "SUCCESS": "Measures were calculated!"}
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_200
+            Controller.calculateMeasures()
         except Exception as e:
             doc = { "ERROR": e }
             #doc = JSONEncoder().encode(doc)
@@ -62,8 +62,8 @@ class TILTResource:
     async def on_get_domain(self, req, resp, domain):
         try:
             if val.domain(domain):
-                doc = Controller().getRiskScore(domain)
-                if doc["RiskScore"] == None:
+                doc = Controller.getRiskScore(domain)
+                if doc["riskScore"] == None:
                     doc = { "ERROR": "TILT not found" }
                     #doc = JSONEncoder().encode(doc)
                     resp.text = json.dumps(doc, ensure_ascii=False)
