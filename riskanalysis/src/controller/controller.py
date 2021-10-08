@@ -70,17 +70,16 @@ class Controller:
         return False
 
     def calculateMeasures():
-        print("here")
         Graph().writeLouvain()
-        print("here")
         cluster = Graph().distinctLouvainCluster()
-        print("here")
         for c in cluster:
+            print(c)
             Graph().writeArticleRankCluster(c["cluster"])
             Graph().writeBetweennessCluster(c["cluster"])
             Graph().writeDegreeCluster(c["cluster"])
             Graph().writeHarmonicClosenessCluster(c["cluster"])
-        print("here")
 
     def getRiskScore(domain):
+        if not SharingNetworks().existsNode(domain):
+            return { "riskScore": None }
         return Graph().similarityProbability(domain)

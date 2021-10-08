@@ -54,10 +54,10 @@ class Graph(object):
     def writeArticleRankCluster(self, cluster):
         Graph().__createLouvainGraph("articleRankGraph", cluster)
         try:
-            graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
+            graph.run("CALL gds.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
         except Exception as e:
             Graph().setPropertyCluster(cluster, "articleRank", 0)
-            #print(e)
+            print(e)
         Graph().__deleteGraph("articleRankGraph")
 
     def __writeEigenvector(self):
@@ -85,7 +85,7 @@ class Graph(object):
             graph.run("CALL gds.betweenness.write('betweennessGraph', { writeProperty: 'betweenness' })")
         except Exception as e:
             Graph().setPropertyCluster(cluster, "betweenness", 0)
-            #print(e)
+            print(e)
         Graph().__deleteGraph("betweennessGraph")
 
     def writeDegree(self):
@@ -100,10 +100,10 @@ class Graph(object):
     def writeDegreeCluster(self, cluster):
         Graph().__createLouvainGraph("degreeGraph", cluster)
         try:
-            graph.run("CALL gds.alpha.degree.write('degreeGraph', { writeProperty: 'degree' })")
+            graph.run("CALL gds.degree.write('degreeGraph', { writeProperty: 'degree' })")
         except Exception as e:
             Graph().setPropertyCluster(cluster, "degree", 0)
-            #print(e)
+            print(e)
         Graph().__deleteGraph("degreeGraph")
 
     # depreciated through writeHarmonicCloseness
@@ -133,7 +133,7 @@ class Graph(object):
             graph.run("CALL gds.alpha.closeness.harmonic.write('harmonicClosenessGraph', {writeProperty: 'harmonicCloseness'})")
         except Exception as e:
             Graph().setPropertyCluster(cluster, "harmonicCloseness", 0)
-            #print(e)
+            print(e)
         Graph().__deleteGraph("harmonicClosenessGraph")
 
     def writeLouvain(self):
@@ -396,9 +396,7 @@ class Graph(object):
                 avgSeverity += n["severity"]
                 numberOfBreaches += n["breaches"]
         
-        avgSeverity /= numberOfBreaches
-        
-        return { "RiskScore": len(breachedNodes) / len(similarity),
+        return { "riskScore": len(breachedNodes) / len(similarity),
                  "avgSeverityOfBreaches": avgSeverity,
                  "similarBreachedDomains": breachedNodes,
                  "similarNodes": similarity,
