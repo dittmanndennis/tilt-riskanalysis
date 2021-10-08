@@ -1,6 +1,5 @@
 uvicorn
 falcon
-json
 pymongo
 regex
 py2neo

@@ -54,6 +54,7 @@ class Graph(object):
     def writeArticleRankCluster(self, cluster):
         Graph().__createLouvainGraph("articleRankGraph", cluster)
         try:
+            #graph.run("CALL gds.alpha.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
             graph.run("CALL gds.articleRank.write('articleRankGraph', {writeProperty: 'articleRank'})")
         except Exception as e:
             Graph().setPropertyCluster(cluster, "articleRank", 0)
@@ -100,6 +101,7 @@ class Graph(object):
     def writeDegreeCluster(self, cluster):
         Graph().__createLouvainGraph("degreeGraph", cluster)
         try:
+            #graph.run("CALL gds.alpha.degree.write('degreeGraph', { writeProperty: 'degree' })")
             graph.run("CALL gds.degree.write('degreeGraph', { writeProperty: 'degree' })")
         except Exception as e:
             Graph().setPropertyCluster(cluster, "degree", 0)
@@ -177,32 +179,32 @@ class Graph(object):
         try:
             articleBetweenness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.betweenness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            #print(e)
+            print(e)
             articleBetweenness = 1.0
         try:
             articleDegree = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.degree)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            #print(e)
+            print(e)
             articleDegree = 1.0
         try:
             articleCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.articleRank)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            #print(e)
+            print(e)
             articleCloseness = 1.0
         try:
             betweennessDegree = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.betweenness)}, {item: " + str(item["item"]) + ", weights: collect(n.degree)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            #print(e)
+            print(e)
             betweennessDegree = 1.0
         try:
             betweennessCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.betweenness)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            #print(e)
+            print(e)
             betweennessCloseness = 1.0
         try:
             degreeCloseness = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH [{item: " + str(item["item"]) + ", weights: collect(n.degree)}, {item: " + str(item["item"]) + ", weights: collect(n.harmonicCloseness)}] as data CALL gds.alpha.similarity.pearson.stream({data: data, topK: 0}) YIELD similarity RETURN similarity ORDER BY similarity DESC").data()[0]["similarity"]
         except Exception as e:
-            #print(e)
+            print(e)
             degreeCloseness = 1.0
 
         #Degree can always be calculated
@@ -296,13 +298,13 @@ class Graph(object):
         try:
             articleRankSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.articleRank]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]["similarityAvg"] #YIELD item1, item2, similarity RETURN gds.util.asNode(item1).domain AS from, gds.util.asNode(item2).domain AS to, similarity ORDER BY similarity DESC")
         except Exception as e:
-            #print(e)
+            print(e)
             articleRankSimilarity = 0.0
         
         try:
             betweennessSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.betweenness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]["similarityAvg"]
         except Exception as e:
-            #print(e)
+            print(e)
             betweennessSimilarity = 0.0
         
         try:
@@ -310,13 +312,13 @@ class Graph(object):
             if degreeSimilarity is None:
                 degreeSimilarity = 0.0
         except Exception as e:
-            #print(e)
+            print(e)
             degreeSimilarity = 0.0
         
         try:
             harmonicClosenessSimilarity = graph.run("MATCH (n {louvain: " + str(cluster) + "}) WITH {item: id(n), weights: [n.harmonicCloseness]} AS userData WITH collect(userData) AS data CALL gds.alpha.similarity.euclidean.stream({data: data, topK: 0}) YIELD similarity RETURN avg(similarity) AS similarityAvg").data()[0]["similarityAvg"]
         except Exception as e:
-            #print(e)
+            print(e)
             harmonicClosenessSimilarity = 0.0
 
         # Article, Betweenness, Degree, Closeness
@@ -356,7 +358,7 @@ class Graph(object):
             comparedSimilarity.append(similarityDomain[3] and similarityCluster[3])
             #if comparedSimilarity[0] == False and comparedSimilarity[1] == False and comparedSimilarity[2] == False and comparedSimilarity[3] == False:
             #    comparedSimilarity[2] = True
-            print(comparedSimilarity)
+            print(validMeasures)#comparedSimilarity)
             
             bestEntry = 0.9
             if c["cluster"] == domainCluster:

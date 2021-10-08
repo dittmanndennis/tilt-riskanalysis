@@ -70,6 +70,7 @@ class Controller:
         return False
 
     def calculateMeasures():
+        print("Here")
         Graph().writeLouvain()
         cluster = Graph().distinctLouvainCluster()
         for c in cluster:
