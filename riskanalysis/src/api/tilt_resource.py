@@ -13,10 +13,10 @@ class TILTResource:
 
     async def on_get_update(self, req, resp):
         try:
+            Controller.update()
             doc = { "SUCCESS": "Database was updated!"}
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_200
-            Controller.update()
         except Exception as e:
             doc = { "ERROR": e }
             resp.text = json.dumps(doc, ensure_ascii=False)

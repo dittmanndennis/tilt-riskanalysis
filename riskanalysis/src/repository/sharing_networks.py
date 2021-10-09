@@ -3,7 +3,7 @@ from py2neo import Graph, Node, Relationship
 from ..common.constants import *
 
 # connects to the Neo4j instance
-graph = Graph(NEO4J['URI'], auth=(NEO4J['Username'], NEO4J['Password']))
+graph = Graph(NEO4J['DOCKER_URI'], auth=(NEO4J['Username'], NEO4J['Password']))
 
 class SharingNetworks(object):
 

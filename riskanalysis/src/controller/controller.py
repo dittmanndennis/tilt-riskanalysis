@@ -9,7 +9,6 @@ class Controller:
 
     def update():
         find = FindTILTs()
-        sharing = SharingNetworks()
         
         cursor = find.allTILTs()
 
@@ -70,7 +69,6 @@ class Controller:
         return False
 
     def calculateMeasures():
-        print("Here")
         Graph().writeLouvain()
         cluster = Graph().distinctLouvainCluster()
         for c in cluster:

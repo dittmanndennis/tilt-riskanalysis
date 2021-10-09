@@ -6,7 +6,7 @@ from ..common.constants import *
 
 # pymongo connecting to mongoDB
 client = pymongo.MongoClient(
-    host=MONGO['HOST'],
+    host=MONGO['DOCKER'],
     port=MONGO['PORT'],
     username=MONGO['USERNAME'],
     password=MONGO['PASSWORD']
