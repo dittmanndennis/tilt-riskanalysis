@@ -1,13 +1,12 @@
 import pymongo as pymongo
 import re
 import requests as req
-from tld import get_fld
 
 from ..common.constants import *
 
 # pymongo connecting to mongoDB
 client = pymongo.MongoClient(
-    host=MONGO['HOST'],
+    host=MONGO['DOCKER'],
     port=MONGO['PORT'],
     username=MONGO['USERNAME'],
     password=MONGO['PASSWORD']
@@ -219,7 +218,7 @@ class FindTILTs(object):
 
     def nodeData(self, doc):
         breaches = FindTILTs().getBreaches(doc["meta"]["url"])
-        
+
         categories = []
         recipients = []
         for category in doc["dataDisclosed"]:
@@ -229,7 +228,7 @@ class FindTILTs(object):
                     if "domain" in recipient and len(recipient["domain"]) > 0 and recipient["domain"].lower() not in recipients:
                         recipientBreaches = FindTILTs().getBreaches(recipient["domain"])
                         recipients.append([recipient["domain"].lower(), "", recipientBreaches[0], recipientBreaches[1], [], 0, ""])
-        
+
         marketCapitalization = 0
         industrialSector = ""
         if "riskAnalysis" in doc:

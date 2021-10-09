@@ -6,15 +6,15 @@ services:
         ports:
             - "8000:8000"
     neo4j:
-        image: "neo4j:enterprise"
+        image: "neo4j:latest"
         container_name: riskanalysis-neo4j
         ports:
             - "7474:7474"   #HTTP
             - "7473:7473"   #HTTPS
             - "7687:7687"   #Bolt
         environment:
-            - NEO4J_AUTH=none
-            - NEO4JLABS_PLUGINS=["bloom","graph-data-science"]
+            - NEO4J_AUTH=neo4j/test
+            - NEO4JLABS_PLUGINS=["graph-data-science"]
     mongo:
         image: mongo
         container_name: riskanalysis-mongo

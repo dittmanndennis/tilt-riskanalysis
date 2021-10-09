@@ -1,10 +1,9 @@
 from py2neo import Graph, Node, Relationship
-from collections import Counter
 
 from ..common.constants import *
 
 # connects to the Neo4j instance
-graph = Graph(NEO4J['URI'])
+graph = Graph(NEO4J['DOCKER_URI'], auth=(NEO4J['Username'], NEO4J['Password']))
 
 class SharingNetworks(object):
 
@@ -61,11 +60,12 @@ class SharingNetworks(object):
         query = 'MATCH (p:Domain)-[:SENDS_DATA_TO *]->(d:Domain) WHERE p.domain="' + parentDomain + '" WITH COLLECT (d) + p AS all UNWIND all as p MATCH (p)-[:SENDS_DATA_TO]->(d) RETURN p.domain'
         data = graph.run(query).data()
 
+        count = 0
         nodes = []
         for node in data:
+            count += 1
             nodes.append(node["p.domain"])
-        
-        count = Counter(nodes)
+
         print(count)
 
     # creates a sharing network with createNode() and createRelationship()
