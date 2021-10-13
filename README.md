@@ -1,6 +1,6 @@
 # RiskAnalysis
 
-## Without Docker:
+## With Docker & Server (Uvicorn):
 
   sudo docker-compose up
   
@@ -9,7 +9,7 @@
   uvicorn --reload riskanalysis.src.app:app
 
 
-## With Docker:
+## With Docker-Compose:
 
   sudo docker-compose up
     
@@ -18,13 +18,13 @@
 
 ### Configuration riskanalysis-mongo
 
-  following steps are easiest to fulfill with login into riskanalysis-mongo-express (localhost:8081)
+  following steps are easiest to fulfill with login into riskanalysis-mongo-express ({wherever_you_host}:8081)
   
   create database "RiskAnalysis"
   
   create collection "tilt" in "RiskAnalysis"
   
-  insert tilt documents into "tilt"
+  insert TILT documents into "tilt"
 
 ## Call API:
   
