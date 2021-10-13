@@ -2,7 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=vscode,python,linux
 
 # Ignore directories
-common/
+#common/
 
 ### Linux ###
 *~
