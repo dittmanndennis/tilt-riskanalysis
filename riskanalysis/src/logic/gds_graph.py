@@ -211,32 +211,32 @@ class Graph(object):
         if articleBetweenness == 1.0 and articleDegree == 1.0 and articleCloseness == 1.0 and betweennessDegree == 1.0 and betweennessCloseness == 1.0 and degreeCloseness == 1.0:
             return [False, False, True, False]
         
-        if measures[0] and measures[1] and articleBetweenness >= 0.8:
+        if measures[0] and measures[1] and articleBetweenness >= 0.9:
             if (articleDegree + 1.0) + (articleCloseness + 1.0) < (betweennessDegree + 1.0) + (betweennessCloseness + 1.0):
                 measures[1] = False
             else:
                 measures[0] = False
-        if measures[0] and measures[2] and articleDegree >= 0.8:
+        if measures[0] and measures[2] and articleDegree >= 0.9:
             if (articleBetweenness + 1.0) + (articleCloseness + 1.0) < (betweennessDegree + 1.0) + (degreeCloseness + 1.0):
                 measures[2] = False
             else:
                 measures[0] = False
-        if measures[0] and measures[3] and articleCloseness >= 0.8:
+        if measures[0] and measures[3] and articleCloseness >= 0.9:
             if (articleBetweenness + 1.0) + (articleDegree + 1.0) < (betweennessCloseness + 1.0) + (degreeCloseness + 1.0):
                 measures[3] = False
             else:
                 measures[0] = False
-        if measures[1] and measures[2] and betweennessDegree >= 0.8:
+        if measures[1] and measures[2] and betweennessDegree >= 0.9:
             if (articleBetweenness + 1.0) + (betweennessCloseness + 1.0) < (articleDegree + 1.0) + (degreeCloseness + 1.0):
                 measures[2] = False
             else:
                 measures[1] = False
-        if measures[1] and measures[3] and betweennessCloseness >= 0.8:
+        if measures[1] and measures[3] and betweennessCloseness >= 0.9:
             if (articleBetweenness + 1.0) + (betweennessDegree + 1.0) < (articleCloseness + 1.0) + (degreeCloseness + 1.0):
                 measures[2] = False
             else:
                 measures[1] = False
-        if measures[2] and measures[3] and degreeCloseness >= 0.8:
+        if measures[2] and measures[3] and degreeCloseness >= 0.9:
             if (articleDegree + 1.0) + (betweennessDegree + 1.0) < (articleCloseness + 1.0) + (betweennessCloseness + 1.0):
                 measures[3] = False
             else:
@@ -324,13 +324,13 @@ class Graph(object):
         # Article, Betweenness, Degree, Closeness
         measures = [True, True, True, True]
 
-        if articleRankSimilarity < 0.1:
+        if articleRankSimilarity < 0.01:
             measures[0] = False
         if betweennessSimilarity < 0.1:
             measures[1] = False
         if degreeSimilarity < 0.1:
             measures[2] = False
-        if harmonicClosenessSimilarity < 0.1:
+        if harmonicClosenessSimilarity < 0.01:
             measures[3] = False
             
         return measures
