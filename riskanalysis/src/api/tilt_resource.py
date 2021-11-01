@@ -44,10 +44,21 @@ class TILTResource:
 
     async def on_get_calculate(self, req, resp):
         try:
+            Controller.calculateMeasures()
             doc = { "SUCCESS": "Measures were calculated!"}
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_200
-            Controller.calculateMeasures()
+        except Exception as e:
+            doc = { "ERROR": e }
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_404
+
+    async def on_get_calculateRisks(self, req, resp):
+        try:
+            Controller.calculateRisks()
+            doc = { "SUCCESS": "Risks were calculated!"}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_200
         except Exception as e:
             doc = { "ERROR": e }
             resp.text = json.dumps(doc, ensure_ascii=False)
@@ -58,16 +69,60 @@ class TILTResource:
             if val.domain(domain):
                 doc = Controller.getRiskScore(domain)
                 if doc["riskScore"] == None:
-                    doc = { "ERROR": "TILT not found" }
+                    doc = { "ERROR": "Risk not found" }
                     resp.text = json.dumps(doc, ensure_ascii=False)
                     resp.status = falcon.HTTP_404
                 else:
                     resp.text = json.dumps(doc, ensure_ascii=False)
                     resp.status = falcon.HTTP_200
             else:
-                doc = { "ERROR": "TILT not found" }
+                doc = { "ERROR": "Risk not found" }
                 resp.text = json.dumps(doc, ensure_ascii=False)
                 resp.status = falcon.HTTP_404
+        except Exception as e:
+            doc = { "ERROR": e }
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_404
+
+    async def on_get_deleteGraph(self, req, resp):
+        try:
+            Controller.deleteGraph()
+            doc = { "SUCCESS": "Graph database was deleted!"}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_200
+        except Exception as e:
+            doc = { "ERROR": e }
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_404
+
+    async def on_get_deleteProperties(self, req, resp):
+        try:
+            Controller.removeProperties()
+            doc = { "SUCCESS": "Graph database was deleted!"}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_200
+        except Exception as e:
+            doc = { "ERROR": e }
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_404
+
+    async def on_get_deleteCollection(self, req, resp, collection):
+        try:
+            Controller.deleteCollection(collection)
+            doc = { "SUCCESS": "Collection was deleted!"}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_200
+        except Exception as e:
+            doc = { "ERROR": e }
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_404
+
+    async def on_get_generate(self, req, resp, i):
+        try:
+            Controller.generate(int(i))
+            doc = { "SUCCESS": "TILTs were generated!"}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_200
         except Exception as e:
             doc = { "ERROR": e }
             resp.text = json.dumps(doc, ensure_ascii=False)

@@ -7,6 +7,13 @@ graph = Graph(NEO4J['DOCKER_URI'], auth=(NEO4J['Username'], NEO4J['Password']))
 
 class Graph(object):
 
+    def dropDatabase(self):
+        graph.run("MATCH ()-[rel]->() DELETE rel")
+        graph.run("MATCH (n) DELETE n")
+
+    def removeProperty(self, property):
+        graph.run("MATCH (n) REMOVE n." + property)
+
     def countNodesCluster(self, cluster):
         return graph.run("MATCH (n {louvain: " + str(cluster) + "}) RETURN count(n) AS count").data()[0]["count"]
 
@@ -24,6 +31,9 @@ class Graph(object):
 
     def breachedDomains(self):
         return graph.run("MATCH (n) WHERE n.numberOfBreaches>0 RETURN id(n)")
+
+    def getDomains(self):
+        return graph.run("MATCH (n) RETURN n.domain as domain").data()
     
     #Graph Data Science Stuff
 
@@ -211,32 +221,32 @@ class Graph(object):
         if articleBetweenness == 1.0 and articleDegree == 1.0 and articleCloseness == 1.0 and betweennessDegree == 1.0 and betweennessCloseness == 1.0 and degreeCloseness == 1.0:
             return [False, False, True, False]
         
-        if measures[0] and measures[1] and articleBetweenness >= 0.8:
+        if measures[0] and measures[1] and articleBetweenness >= 0.9:
             if (articleDegree + 1.0) + (articleCloseness + 1.0) < (betweennessDegree + 1.0) + (betweennessCloseness + 1.0):
                 measures[1] = False
             else:
                 measures[0] = False
-        if measures[0] and measures[2] and articleDegree >= 0.8:
+        if measures[0] and measures[2] and articleDegree >= 0.9:
             if (articleBetweenness + 1.0) + (articleCloseness + 1.0) < (betweennessDegree + 1.0) + (degreeCloseness + 1.0):
                 measures[2] = False
             else:
                 measures[0] = False
-        if measures[0] and measures[3] and articleCloseness >= 0.8:
+        if measures[0] and measures[3] and articleCloseness >= 0.9:
             if (articleBetweenness + 1.0) + (articleDegree + 1.0) < (betweennessCloseness + 1.0) + (degreeCloseness + 1.0):
                 measures[3] = False
             else:
                 measures[0] = False
-        if measures[1] and measures[2] and betweennessDegree >= 0.8:
+        if measures[1] and measures[2] and betweennessDegree >= 0.9:
             if (articleBetweenness + 1.0) + (betweennessCloseness + 1.0) < (articleDegree + 1.0) + (degreeCloseness + 1.0):
                 measures[2] = False
             else:
                 measures[1] = False
-        if measures[1] and measures[3] and betweennessCloseness >= 0.8:
+        if measures[1] and measures[3] and betweennessCloseness >= 0.9:
             if (articleBetweenness + 1.0) + (betweennessDegree + 1.0) < (articleCloseness + 1.0) + (degreeCloseness + 1.0):
                 measures[2] = False
             else:
                 measures[1] = False
-        if measures[2] and measures[3] and degreeCloseness >= 0.8:
+        if measures[2] and measures[3] and degreeCloseness >= 0.9:
             if (articleDegree + 1.0) + (betweennessDegree + 1.0) < (articleCloseness + 1.0) + (betweennessCloseness + 1.0):
                 measures[3] = False
             else:
@@ -324,13 +334,13 @@ class Graph(object):
         # Article, Betweenness, Degree, Closeness
         measures = [True, True, True, True]
 
-        if articleRankSimilarity < 0.1:
+        if articleRankSimilarity is None or articleRankSimilarity < 0.01:
             measures[0] = False
-        if betweennessSimilarity < 0.1:
+        if betweennessSimilarity is None or betweennessSimilarity < 0.1:
             measures[1] = False
-        if degreeSimilarity < 0.1:
+        if degreeSimilarity is None or degreeSimilarity < 0.1:
             measures[2] = False
-        if harmonicClosenessSimilarity < 0.1:
+        if harmonicClosenessSimilarity is None or harmonicClosenessSimilarity < 0.01:
             measures[3] = False
             
         return measures
@@ -367,9 +377,8 @@ class Graph(object):
             clusterNodes = graph.run("MATCH (n {louvain: " + str(c["cluster"]) + "}) RETURN n.domain AS domain, n.numberOfBreaches AS breaches, n.louvain AS cluster, n.severityOfBreaches AS severity, n.articleRank AS articleRank, n.betweenness AS betweenness, n.degree AS degree, n.harmonicCloseness as harmonicCloseness").data()
             for n in clusterNodes:
                 if n["domain"] is not None and domain not in n["domain"]:
-                    
                     sim = Graph().pearsonSimilarityNodes(domain, n["domain"], comparedSimilarity)
-                    print(sim)
+                    #print(sim)
                     if sim is None:
                         continue
                     elif sim["similarity"] == 1.0:
@@ -377,17 +386,19 @@ class Graph(object):
                         bestNodes.clear()
                         similarity.append(n)
                     elif sim["similarity"] > bestEntry:
-                        bestEntry = sim
+                        bestEntry = sim["similarity"]
                         bestNodes.clear()
                         bestNodes.append(n)
                     elif sim["similarity"] == bestEntry:
                         bestNodes.append(n)
-                        
+            
             if bestEntry < 1.0:
                 similarity.extend(bestNodes)
         
         if len(similarity) <= 1:
-            return graph.run("MATCH (n) WHERE n.numberOfBreaches > 0  MATCH (m) RETURN toFloat(count(DISTINCT n)) / toFloat(count(DISTINCT m)) AS riskScore").data()[0]
+            riskScore = graph.run("MATCH (n) WHERE n.numberOfBreaches > 0  MATCH (m) RETURN toFloat(count(DISTINCT n)) / toFloat(count(DISTINCT m)) AS riskScore").data()[0]
+            riskScore["domain"] = domain
+            return riskScore
         
         breachedNodes = []
         avgSeverity = 0
@@ -398,7 +409,8 @@ class Graph(object):
                 avgSeverity += n["severity"]
                 numberOfBreaches += n["breaches"]
         
-        return { "riskScore": len(breachedNodes) / len(similarity),
+        return { "domain": domain,
+                 "riskScore": len(breachedNodes) / len(similarity),
                  "avgSeverityOfBreaches": avgSeverity,
                  "similarBreachedDomains": breachedNodes,
                  "similarNodes": similarity,
