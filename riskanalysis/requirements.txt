@@ -6,5 +6,4 @@ py2neo
 requests
 validators
 tld
-bson
 falcon-swagger-ui
