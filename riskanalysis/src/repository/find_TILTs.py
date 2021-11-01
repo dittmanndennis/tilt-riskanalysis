@@ -1,6 +1,7 @@
 import pymongo as pymongo
 import re
 import requests as req
+from tld import get_fld
 
 from ..common.constants import *
 
@@ -208,6 +209,9 @@ class FindTILTs(object):
         except Exception as e:
             print(e)
             return None
+
+    def postTILT(self, document):
+        tiltCollection.insert_one(document)
 
     def allTILTs(self):
         try:
