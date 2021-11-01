@@ -140,7 +140,7 @@ class Controller:
         for r in range(i):
             res = ''.join(random.choices(string.ascii_lowercase + string.digits, k = 7))
             domains.append(res + ".com")
-        print("Here")
+        print(os.path.abspath(__file__))
         with open('./riskanalysis/src/tilt/backup-copy.json') as f:
             print("Here")
             file_data = json.load(f)
