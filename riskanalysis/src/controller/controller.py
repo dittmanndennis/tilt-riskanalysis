@@ -8,6 +8,7 @@ from bson.json_util import dumps
 import random
 import string
 import json
+import os
 
 class Controller:
 
@@ -139,8 +140,9 @@ class Controller:
         for r in range(i):
             res = ''.join(random.choices(string.ascii_lowercase + string.digits, k = 7))
             domains.append(res + ".com")
-        
+        print("Here")
         with open('./riskanalysis/src/tilt/backup-copy.json') as f:
+            print("Here")
             file_data = json.load(f)
             for count in range(i):
                 usedDomains = [count]
@@ -157,3 +159,6 @@ class Controller:
                         break
                 
                 FindTILTs().postTILT(file_data.copy())
+
+    def path():
+        return { "path": os.path.abspath(__file__) }
