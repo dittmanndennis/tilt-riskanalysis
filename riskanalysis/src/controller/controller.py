@@ -92,13 +92,13 @@ class Controller:
             username=MONGO['USERNAME'],
             password=MONGO['PASSWORD']
         )
-        tiltCollection = client["RiskAnalysis"]["riskScore"]
+        riskScoreCollection = client["RiskAnalysis"]["riskScore"]
 
         domains = Graph().getDomains()
         
         for domain in domains:
-            if tiltCollection.find_one( { "domain": domain } ) is not None:
-                tiltCollection.insert_one(Graph().similarityProbability(domain["domain"]))
+            if riskScoreCollection.find_one( { "domain": domain["domain"] } ) is None:
+                riskScoreCollection.insert_one(Graph().similarityProbability(domain["domain"]))
 
     def getRiskScore(domain):
         client = pymongo.MongoClient(
@@ -140,9 +140,8 @@ class Controller:
         for r in range(i):
             res = ''.join(random.choices(string.ascii_lowercase + string.digits, k = 7))
             domains.append(res + ".com")
-        print(os.path.abspath(__file__))
-        with open('./src/tilt/backup-copy.json') as f: #./riskanalysis/src/tilt/backup-copy.json
-            print("Here")
+            
+        with open('./riskanalysis/src/src/tilt/backup-copy.json') as f:
             file_data = json.load(f)
             for count in range(i):
                 usedDomains = [count]
