@@ -141,7 +141,7 @@ class Controller:
             res = ''.join(random.choices(string.ascii_lowercase + string.digits, k = 7))
             domains.append(res + ".com")
             
-        with open('./riskanalysis/src/src/tilt/backup-copy.json') as f:
+        with open('./src/tilt/backup-copy.json') as f:  #./riskanalysis/src/tilt/backup-copy.json
             file_data = json.load(f)
             for count in range(i):
                 usedDomains = [count]
