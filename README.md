@@ -24,6 +24,8 @@
   
   create collection "tilt" in "RiskAnalysis"
   
+  create collection "riskScore" in "RiskAnalysis"
+  
   insert TILT documents into "tilt"
 
 ## Call API:
@@ -32,6 +34,16 @@
   
   http localhost:8000/update/{domain}
   
+  http localhost:8000/{domain}
+  
   http localhost:8000/calculate
   
-  http localhost:8000/{domain}
+  http localhost:8000/calculateRisks
+  
+  http localhost:8000/deleteGraph
+  
+  http localhost:8000/deleteProperties
+  
+  http localhost:8000/deleteCollection/{collectionName}
+  
+  http localhost:8000/generate/{i_TILTs}
