@@ -27,6 +27,8 @@
   create collection "riskScore" in "RiskAnalysis"
   
   insert TILT documents into "tilt"
+  
+  example TILTs can be found in: tilt-riskanalysis/riskanalysis/src/tilt/
 
 ## Call API:
   
