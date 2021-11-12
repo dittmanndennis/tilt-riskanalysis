@@ -42,10 +42,10 @@
   
   http localhost:8000/calculateRisks
   
-  http localhost:8000/deleteGraph
+  testing: http localhost:8000/deleteGraph
   
-  http localhost:8000/deleteProperties
+  testing: http localhost:8000/deleteProperties
   
-  http localhost:8000/deleteCollection/{collectionName}
+  testing: http localhost:8000/deleteCollection/{collectionName}
   
-  http localhost:8000/generate/{i_TILTs}
+  testing: http localhost:8000/generate/{i_TILTs}
