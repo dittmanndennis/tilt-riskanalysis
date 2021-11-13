@@ -40,7 +40,7 @@
   
   http localhost:8000/calculate
   
-  http localhost:8000/calculateRisks
+  http localhost:8000/calculateRisk/{domain}
   
   testing: http localhost:8000/deleteGraph
   
