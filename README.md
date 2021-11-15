@@ -52,4 +52,4 @@
   
   testing: http localhost:8000/deleteCollection/{collectionName}
   
-  testing: http localhost:8000/generate/{i_TILTs}
+  testing: http localhost:8000/generate/{i_TILTs}                   can be broken, if path changes
