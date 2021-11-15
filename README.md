@@ -18,7 +18,7 @@
   sudo docker-compose up
     
     - you may need to restart riskanalysis-mongo-express, if it starts earlier than riskanalysis-mongo
-    - you may need to restart riskanalysis-api, if it tries to connect do riskanalysis-mongo or riskanalysis-neo4j before they finished starting
+    - you may need to restart riskanalysis-api, if it tries to connect to riskanalysis-mongo or riskanalysis-neo4j before they finished starting
 
 ### Configuration riskanalysis-mongo
 
@@ -33,6 +33,8 @@
   insert TILT documents into "tilt"
   
   example TILTs can be found in: tilt-riskanalysis/riskanalysis/src/tilt/
+  
+  call /update to setup the databases
 
 ## Call API:
   
