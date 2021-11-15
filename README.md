@@ -2,6 +2,9 @@
 
 ## With Docker & Server (Uvicorn):
 
+  MongoClient: change host=MONGO['DOCKER'] to host=MONGO['HOST']
+  Graph: change Graph(NEO4J['DOCKER_URI']) to Graph(NEO4J['URI'])
+
   sudo docker-compose up
   
   sudo docker stop riskanalysis-api
