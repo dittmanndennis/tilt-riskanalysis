@@ -20,7 +20,7 @@
     - you may need to restart riskanalysis-mongo-express, if it starts earlier than riskanalysis-mongo
     - you may need to restart riskanalysis-api, if it tries to connect to riskanalysis-mongo or riskanalysis-neo4j before they finished starting
 
-### Configuration riskanalysis-mongo
+### Configuration
 
   following steps are easiest to fulfill with login into riskanalysis-mongo-express ({wherever_you_host}:8081)
   
