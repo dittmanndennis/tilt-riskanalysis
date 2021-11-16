@@ -34,6 +34,8 @@
   
   example TILTs can be found in: tilt-riskanalysis/riskanalysis/src/tilt/
   
+  testing: call /generate/{i} to mock TILTs
+  
   call /update to setup the databases
 
 ## Call API:
