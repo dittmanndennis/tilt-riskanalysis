@@ -26,7 +26,7 @@ class Controller:
             if c:
                 Controller.calculateMeasures()
                 break
-        
+
         Controller.calculateRisks()
 
     def multiUpdate(doc):
@@ -52,12 +52,12 @@ class Controller:
     def updateDomain(domain):
         find = FindTILTs()
         sharing = SharingNetworks()
-
         changes = False
+    
         doc = find.getTILT(domain)
         if doc is None:
             return True
-
+        
         doc["meta"]["url"] = get_fld(doc["meta"]["url"])
         nodeData = find.nodeData(doc)
         if not sharing.existsNode(doc["meta"]["url"]):
@@ -70,9 +70,12 @@ class Controller:
             if not sharing.existsRelationship([doc["meta"]["url"], recipient[0]]):
                 changes = True
                 sharing.createRelationship([doc["meta"]["url"], recipient[0]])
-        
+                
         if changes:
-            Controller().calculateMeasures()
+            Controller.calculateMeasures()
+        
+        Controller.calculateRiskDomain(domain)
+        
         return False
 
     def calculateMeasures():
@@ -84,6 +87,18 @@ class Controller:
             Graph().writeBetweennessCluster(c["cluster"])
             Graph().writeDegreeCluster(c["cluster"])
             Graph().writeHarmonicClosenessCluster(c["cluster"])
+
+    def calculateRiskDomain(domain):
+        client = pymongo.MongoClient(
+            host=MONGO['DOCKER'],
+            port=MONGO['PORT'],
+            username=MONGO['USERNAME'],
+            password=MONGO['PASSWORD']
+        )
+        riskScoreCollection = client["RiskAnalysis"]["riskScore"]
+        
+        if riskScoreCollection.find_one( { "domain": domain } ) is None:
+            riskScoreCollection.insert_one(Graph().similarityProbability(domain))
 
     def calculateRisks():
         client = pymongo.MongoClient(
@@ -140,8 +155,9 @@ class Controller:
         for r in range(i):
             res = ''.join(random.choices(string.ascii_lowercase + string.digits, k = 7))
             domains.append(res + ".com")
-            
+        print("Here")
         with open('./src/tilt/backup-copy.json') as f:  #./riskanalysis/src/tilt/backup-copy.json
+            print("Here")
             file_data = json.load(f)
             for count in range(i):
                 usedDomains = [count]
