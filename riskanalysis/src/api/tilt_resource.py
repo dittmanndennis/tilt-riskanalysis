@@ -53,6 +53,17 @@ class TILTResource:
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_404
 
+    async def on_get_calculateRiskDomain(self, req, resp, domain):
+        try:
+            Controller.calculateRiskDomain(domain)
+            doc = { "SUCCESS": "Risks were calculated!"}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_200
+        except Exception as e:
+            doc = { "ERROR": e }
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_404
+
     async def on_get_calculateRisks(self, req, resp):
         try:
             Controller.calculateRisks()
@@ -121,6 +132,16 @@ class TILTResource:
         try:
             Controller.generate(int(i))
             doc = { "SUCCESS": "TILTs were generated!"}
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_200
+        except Exception as e:
+            doc = { "ERROR": e }
+            resp.text = json.dumps(doc, ensure_ascii=False)
+            resp.status = falcon.HTTP_404
+
+    async def on_get_path(self, req, resp):
+        try:
+            doc = Controller.path()
             resp.text = json.dumps(doc, ensure_ascii=False)
             resp.status = falcon.HTTP_200
         except Exception as e:
